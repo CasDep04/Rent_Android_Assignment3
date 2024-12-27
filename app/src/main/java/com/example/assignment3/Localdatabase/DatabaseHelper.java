@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String DB_NAME = "Assignment2.DB";
+    private static final String DB_NAME = "EZRENT.DB";
     private static final int DB_VERSION = 1;
 
     //ACOUNT TABLE
-    public static final String TABLE_ACC = "account";
+    public static final String TABLE_ACC = "current_account";
     public static final String ACC_ID = "_id";
     public static final String ACC_EMAIL = "email";
     public static final String ACC_PASSWORD = "password";
@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_ACCOUNT =
             "CREATE TABLE " + TABLE_ACC + " (" +
-                    ACC_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    ACC_ID + " TEXT NOT NULL, " +
                     ACC_EMAIL + " TEXT NOT NULL, " +
                     ACC_PASSWORD + " TEXT NOT NULL, " +
                     ACC_ROLE + " TEXT NOT NULL" +
