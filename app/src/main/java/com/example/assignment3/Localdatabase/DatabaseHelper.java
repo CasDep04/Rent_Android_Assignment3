@@ -10,19 +10,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "EZRENT.DB";
     private static final int DB_VERSION = 1;
 
-    //ACOUNT TABLE
-    public static final String TABLE_ACC = "current_account";
-    public static final String ACC_ID = "_id";
-    public static final String ACC_EMAIL = "email";
-    public static final String ACC_PASSWORD = "password";
-    public static final String ACC_ROLE = "role";
+    // USER TABLE
+    public static final String TABLE_USER = "user_table";
+    public static final String USER_EMAIL = "email";
 
-    private static final String CREATE_TABLE_ACCOUNT =
-            "CREATE TABLE " + TABLE_ACC + " (" +
-                    ACC_ID + " TEXT NOT NULL, " +
-                    ACC_EMAIL + " TEXT NOT NULL, " +
-                    ACC_PASSWORD + " TEXT NOT NULL, " +
-                    ACC_ROLE + " TEXT NOT NULL" +
+    private static final String CREATE_TABLE_USER =
+            "CREATE TABLE " + TABLE_USER + " (" +
+                    USER_EMAIL + " TEXT NOT NULL" +
                     ");";
 
     public DatabaseHelper(@Nullable Context context) {
@@ -31,15 +25,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_TABLE_ACCOUNT);
-
+        db.execSQL(CREATE_TABLE_USER);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACC);
-
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
         onCreate(db);
     }
 }
-

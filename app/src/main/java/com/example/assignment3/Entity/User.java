@@ -5,17 +5,15 @@ import java.util.Date;
 public class User {
     private int id;
     private String email;
-    private String password;
     private String role;
     private double balance;
     private String name;
     private Date dateOfBirth;
 
     // Constructor
-    public User(int id, String email, String password, String role, double balance, String name, Date dateOfBirth) {
+    public User(int id, String email, String role, double balance, String name, Date dateOfBirth) {
         this.id = id;
         this.email = email;
-        this.password = password;
         this.role = role;
         this.balance = balance;
         this.name = name;
@@ -41,13 +39,7 @@ public class User {
     }
 
     // Getter and Setter for password
-    public String getPassword() {
-        return password;
-    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     // Getter and Setter for role
     public String getRole() {
@@ -85,8 +77,4 @@ public class User {
         this.dateOfBirth = dateOfBirth;
     }
 
-    // Check credentials (email and password)
-    public Boolean checkCred(String email, String pass) {
-        return this.email.equals(email) && this.password.equals(pass);
-    }
 }

@@ -1,0 +1,9 @@
+Guest:
+    guest@test.com
+    guest123
+Host:
+    host@test.com
+    host123
+admin
+    admin@test.com
+    admin123
