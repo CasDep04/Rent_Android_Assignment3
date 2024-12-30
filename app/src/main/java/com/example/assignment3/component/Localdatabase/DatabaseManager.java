@@ -1,4 +1,4 @@
-package com.example.assignment3.Localdatabase;
+package com.example.assignment3.component.Localdatabase;
 
 import android.content.ContentValues;
 import android.content.Context;

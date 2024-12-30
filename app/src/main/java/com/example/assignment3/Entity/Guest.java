@@ -5,8 +5,9 @@ import java.util.Date;
 public class Guest extends User {
     private String preferences;  // Preferences for rental properties
 
-    public Guest(int id, String email, String role, double balance, String name, Date dateOfBirth, String preferences) {
-        super(id, email, role, balance, name, dateOfBirth);
+    public Guest(){}
+    public Guest(int id, String email, double balance, String name, String dateOfBirth, String preferences) {
+        super(id, email, "guest", balance, name, dateOfBirth);
         this.preferences = preferences;
     }
 

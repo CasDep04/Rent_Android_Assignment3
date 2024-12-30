@@ -5,8 +5,9 @@ import java.util.Date;
 public class Host extends User {
     private int totalProperties; // Number of properties listed
 
-    public Host(int id, String email, String role, double balance, String name, Date dateOfBirth, int totalProperties) {
-        super(id, email, role, balance, name, dateOfBirth);
+    public Host(){}
+    public Host(int id, String email, double balance, String name, String dateOfBirth, int totalProperties) {
+        super(id, email, "host", balance, name, dateOfBirth);
         this.totalProperties = totalProperties;
     }
 

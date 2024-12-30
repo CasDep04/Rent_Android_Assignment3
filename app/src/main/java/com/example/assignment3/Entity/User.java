@@ -8,10 +8,11 @@ public class User {
     private String role;
     private double balance;
     private String name;
-    private Date dateOfBirth;
+    private String dateOfBirth;
 
+    public User(){}
     // Constructor
-    public User(int id, String email, String role, double balance, String name, Date dateOfBirth) {
+    public User(int id, String email, String role, double balance, String name, String dateOfBirth) {
         this.id = id;
         this.email = email;
         this.role = role;
@@ -69,11 +70,11 @@ public class User {
     }
 
     // Getter and Setter for dateOfBirth
-    public Date getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
