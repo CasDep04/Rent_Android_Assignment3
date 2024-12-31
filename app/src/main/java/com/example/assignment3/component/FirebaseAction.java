@@ -1,5 +1,6 @@
 package com.example.assignment3.component;
 
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,16 +10,32 @@ import com.example.assignment3.Entity.Location;
 import com.example.assignment3.Entity.Review;
 import com.example.assignment3.Entity.RentalRecord;
 import com.example.assignment3.Entity.User;
+import com.example.assignment3.GuestMainActivity;
+import com.example.assignment3.HostMainActivity;
 import com.example.assignment3.RegistrationInfoActivity;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 public class FirebaseAction {
 
     public static Task<Void> addLocationToFirestore(Location location) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("locations").document(String.valueOf(location.getId())).set(location);
+        return db.collection("locations")
+                .orderBy("id", Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .continueWithTask(task -> {
+                    if (task.isSuccessful()) {
+                        int newId = task.getResult().isEmpty() ? 1 : task.getResult().getDocuments().get(0).getLong("id").intValue() + 1;
+                        location.setId(newId);
+                        return db.collection("locations").document(String.valueOf(location.getId())).set(location);
+                    } else {
+                        throw task.getException(); // Re-throw the exception if the query fails
+                    }
+                });
     }
 //    sample
 //      FirebaseAction.addUserToFirestore(user)
@@ -26,17 +43,53 @@ public class FirebaseAction {
 //            .addOnFailureListener(e -> Toast.makeText(RegistrationInfoActivity.this, "Failed to save user information: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     public static Task<Void> addReviewToFirestore(Review review) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("reviews").document(String.valueOf(review.getId())).set(review);
+        return db.collection("reviews")
+                .orderBy("id", Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .continueWithTask(task -> {
+                    if (task.isSuccessful()) {
+                        int newId = task.getResult().isEmpty() ? 1 : task.getResult().getDocuments().get(0).getLong("id").intValue() + 1;
+                        review.setId(newId);
+                        return db.collection("reviews").document(String.valueOf(review.getId())).set(review);
+                    } else {
+                        throw task.getException(); // Re-throw the exception if the query fails
+                    }
+                });
     }
 
     public static Task<Void> addRecordToFirestore(RentalRecord record) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentalRecords").document(String.valueOf(record.getId())).set(record);
+        return db.collection("rentalRecords")
+                .orderBy("id", Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .continueWithTask(task -> {
+                    if (task.isSuccessful()) {
+                        int newId = task.getResult().isEmpty() ? 1 : task.getResult().getDocuments().get(0).getLong("id").intValue() + 1;
+                        record.setId(newId);
+                        return db.collection("rentalRecords").document(String.valueOf(record.getId())).set(record);
+                    } else {
+                        throw task.getException(); // Re-throw the exception if the query fails
+                    }
+                });
     }
 
     public static Task<Void> addUserToFirestore(User user) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("users").document(String.valueOf(user.getId())).set(user);
+        return db.collection("users")
+                .orderBy("id", Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .continueWithTask(task -> {
+                    if (task.isSuccessful()) {
+                        int newId = task.getResult().isEmpty() ? 1 : task.getResult().getDocuments().get(0).getLong("id").intValue() + 1;
+                        user.setId(newId);
+                        return db.collection("users").document(String.valueOf(user.getId())).set(user);
+                    } else {
+                        throw task.getException(); // Re-throw the exception if the query fails
+                    }
+                });
     }
 
     public static Task<Void> editLocationInFirestore(Location location) {
@@ -61,6 +114,8 @@ public class FirebaseAction {
 
     public static Task<Void> deleteLocationFromFirestore(int locationId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
         return db.collection("locations").document(String.valueOf(locationId)).delete();
     }
 
@@ -76,6 +131,15 @@ public class FirebaseAction {
 
     public static Task<Void> deleteUserFromFirestore(int userId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        //Authentication: delete user only
+        if (mAuth.getCurrentUser() != null) {
+            mAuth.getCurrentUser().delete()
+                    .addOnSuccessListener(aVoid -> Log.d("DeleteUser", "Firebase Authentication account deleted successfully."))
+                    .addOnFailureListener(e -> Log.e("DeleteUser", "Failed to delete Firebase Authentication account: " + e.getMessage()));
+        } else {
+            Log.e("DeleteUser", "No current user logged in. Unable to delete Firebase Authentication account.");
+        }
         return db.collection("users").document(String.valueOf(userId)).delete();
     }
 
@@ -128,7 +192,6 @@ public class FirebaseAction {
 //    } else {
 //        Toast.makeText(this, "User ID is missing or invalid", Toast.LENGTH_SHORT).show();
 //    }
-
     public static Task<Location> findLocationById(int locationId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         return db.collection("locations").document(String.valueOf(locationId)).get().continueWith(task -> {

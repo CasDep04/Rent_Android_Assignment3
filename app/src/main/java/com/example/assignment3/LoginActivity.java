@@ -173,7 +173,10 @@ public class LoginActivity extends AppCompatActivity {
                                     intent = new Intent(LoginActivity.this, AdminMainActivity.class);
                                 } else if ("guest".equals(role)) {
                                     intent = new Intent(LoginActivity.this, GuestMainActivity.class);
-                                } else {
+                                } else if ("host".equals(role)){
+                                    intent = new Intent(LoginActivity.this, HostMainActivity.class);
+                                }
+                                else {
                                     Toast.makeText(LoginActivity.this, "Unknown role.", Toast.LENGTH_SHORT).show();
                                     return;
                                 }

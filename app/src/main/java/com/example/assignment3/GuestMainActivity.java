@@ -39,6 +39,7 @@ public class GuestMainActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         double userIdDouble = intent.getDoubleExtra("id", 0);
+        Log.d(TAG, "Received user ID: " + userIdDouble); // Log the received user ID
         if (userIdDouble != 0) {
             int userId = (int) userIdDouble;
             FirebaseAction.findUserById(userId).addOnCompleteListener(task -> {
