@@ -1,11 +1,14 @@
 package com.example.assignment3;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -21,14 +24,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginActivity extends AppCompatActivity {
-    private boolean showingLoginView = true;
     private FirebaseAuth mAuth;
     private EditText emailEditText, passwordEditText;
     private EditText registerEmailEditText, registerPasswordEditText, registerConfirmPasswordEditText;
-    private View loginView, registerView ;
+    private RelativeLayout loginView, registerView;
     private Spinner roleSpinner;
     private DatabaseManager LocalDB;
     private FirebaseFirestore firebaseDB;
+    private Button loginButton, toRegisterViewButton, registerButton, goBackButton;
+
+    private static final float ANIMATION_DISTANCE = 1000f; // Default animation distance
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +54,6 @@ public class LoginActivity extends AppCompatActivity {
         loginView = findViewById(R.id.loginView);
         registerView = findViewById(R.id.registerView);
 
-
-        registerView.setTranslationX(1000f);
-
         roleSpinner = findViewById(R.id.roleSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.roles_array, android.R.layout.simple_spinner_item);
@@ -64,6 +67,16 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        loginButton = findViewById(R.id.loginButton);
+        toRegisterViewButton = findViewById(R.id.toRegisterViewButton);
+        registerButton = findViewById(R.id.registerButton);
+        goBackButton = findViewById(R.id.goBackButton);
+
+        toRegisterViewButton.setOnClickListener(v -> toRegisterView());
+        goBackButton.setOnClickListener(v -> toLoginView());
+
+        Utils.animateViewOut(registerView, ANIMATION_DISTANCE);
     }
 
     public void loginUser(View view) {
@@ -88,26 +101,24 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    public void toRegisterView(View view) {
-        emailEditText.setText("");
-        passwordEditText.setText("");
-        if (showingLoginView) {
-            Utils.animateViewOut(loginView, -1000f);
-            Utils.animateViewIn(registerView, 0f);
-            showingLoginView = false;
-        }
+    public void toRegisterView() {
+        animateViewTransition(loginView, registerView, -ANIMATION_DISTANCE, ANIMATION_DISTANCE);
     }
 
-    public void toLoginView(View view) {
-        registerEmailEditText.setText("");
-        registerPasswordEditText.setText("");
-        registerConfirmPasswordEditText.setText("");
-        if (!showingLoginView) {
-            Utils.animateViewOut(registerView, 1000f);
-            Utils.animateViewIn(loginView, 0f);
-            showingLoginView = true;
-        }
+    public void toLoginView() {
+        animateViewTransition(registerView, loginView, ANIMATION_DISTANCE, -ANIMATION_DISTANCE);
     }
+
+    private void animateViewTransition(View viewOut, View viewIn, float directionOut, float directionIn) {
+        Utils.animateViewOut(viewOut, directionOut).addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                viewOut.setVisibility(View.GONE);
+            }
+        });
+        Utils.animateViewIn(viewIn, directionIn);
+    }
+
     public void registerUser(View view) {
         String email = registerEmailEditText.getText().toString();
         String password = registerPasswordEditText.getText().toString();

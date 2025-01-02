@@ -9,8 +9,7 @@
         android:id="@+id/loginView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="visible">
+        android:layout_centerInParent="true">
 
         <EditText
             android:id="@+id/email"
@@ -53,8 +52,7 @@
         android:id="@+id/registerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="visible">
+        android:layout_centerInParent="true">
 
         <EditText
             android:id="@+id/register_email"
@@ -82,7 +80,6 @@
             android:inputType="textPassword"
             android:layout_marginBottom="16dp" />
 
-        <!-- Dropdown menu for role selection styled as a line -->
         <Spinner
             android:id="@+id/roleSpinner"
             android:layout_width="match_parent"

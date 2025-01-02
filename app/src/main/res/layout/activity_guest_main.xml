@@ -107,16 +107,17 @@
 
     <!-- Three RelativeLayouts at the bottom -->
     <RelativeLayout
-        android:id="@+id/view1"
+        android:id="@+id/view3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/buttonRow">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This is View 1"
+            android:text="This is View 3"
             android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
@@ -124,7 +125,6 @@
         android:id="@+id/view2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@+id/buttonRow">
 
@@ -136,17 +136,17 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/view3"
+        android:id="@+id/view1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/buttonRow">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This is View 3"
+            android:text="This is View 1"
             android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
