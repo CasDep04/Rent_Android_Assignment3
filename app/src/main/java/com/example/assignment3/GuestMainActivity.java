@@ -1,17 +1,19 @@
 package com.example.assignment3;
 
-import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import android.widget.ViewAnimator;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.assignment3.component.FirebaseAction;
 import com.example.assignment3.component.Localdatabase.DatabaseManager;
-import com.example.assignment3.component.Utils;
+import com.example.assignment3.Entity.Guest;
+import com.example.assignment3.Entity.User;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class GuestMainActivity extends AppCompatActivity {
@@ -20,11 +22,10 @@ public class GuestMainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseManager db;
-    private TextView nameTextView, birthdayTextView, roleTextView, balanceTextView;
-    private RelativeLayout view1, view2, view3;
-    private Button buttonView1, buttonView2, buttonView3;
-    private int currentView = 2; // Start with view2 visible
-
+    private ViewAnimator viewAnimator;
+    private int currentView = -1; // Initialize to an invalid index
+    private Guest currentGuest;
+    private View profileView, mapView, statusView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,68 +35,115 @@ public class GuestMainActivity extends AppCompatActivity {
         db.open();
         mAuth = FirebaseAuth.getInstance();
 
-        nameTextView = findViewById(R.id.nameTextView);
-        birthdayTextView = findViewById(R.id.birthdayTextView);
-        roleTextView = findViewById(R.id.roleTextView);
-        balanceTextView = findViewById(R.id.balanceTextView);
+        Button buttonView1 = findViewById(R.id.button1);
+        Button buttonView2 = findViewById(R.id.button2);
+        Button buttonView3 = findViewById(R.id.button3);
+        viewAnimator = findViewById(R.id.viewAnimator);
 
-        view1 = findViewById(R.id.view1);
-        view2 = findViewById(R.id.view2);
-        view3 = findViewById(R.id.view3);
+        buttonView1.setOnClickListener(v -> showView(0));
+        buttonView2.setOnClickListener(v -> showView(1));
+        buttonView3.setOnClickListener(v -> showView(2));
 
-        buttonView1 = findViewById(R.id.button1);
-        buttonView2 = findViewById(R.id.button2);
-        buttonView3 = findViewById(R.id.button3);
+        // Set default view
+        showView(1);
 
-        buttonView1.setOnClickListener(v -> handleButtonClick(1));
-        buttonView2.setOnClickListener(v -> handleButtonClick(2));
-        buttonView3.setOnClickListener(v -> handleButtonClick(3));
+        //miniview
+        View view1 = viewAnimator.getChildAt(0);
+        View view2 = viewAnimator.getChildAt(1);
+        View view3 = viewAnimator.getChildAt(2);
+
+        //view 1
+        Button add_balance_button = view1.findViewById(R.id.add_balance_button);
+        Button logout_button = view1.findViewById(R.id.logout_button);
+
+        add_balance_button.setOnClickListener(v -> addBalanceEvent());
+        logout_button.setOnClickListener(v -> logOut());
+        //View 2
+
+        //View 3
+        // Set up button click listeners for each view
+        //setupViewButtons();
+
+        // Display current user information
+        displayCurrentUserInformation();
     }
 
-    private void handleButtonClick(int targetView) {
-        if (currentView == targetView) {
-            return; // No action needed if the target view is already visible
+    private void showView(int viewIndex) {
+        if (viewIndex == currentView) return;
+
+        viewAnimator.setInAnimation(this, viewIndex > viewAnimator.getDisplayedChild() ? R.anim.slide_in_right : R.anim.slide_in_left);
+        viewAnimator.setOutAnimation(this, viewIndex > viewAnimator.getDisplayedChild() ? R.anim.slide_out_left : R.anim.slide_out_right);
+        viewAnimator.setDisplayedChild(viewIndex);
+        currentView = viewIndex;
+    }
+
+    private void displayCurrentUserInformation() {
+        Intent intent = getIntent();
+        double userIdDouble = intent.getDoubleExtra("id", 0);
+
+        if (userIdDouble == 0) {
+            Toast.makeText(this, "User ID is missing or invalid", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        RelativeLayout currentViewLayout = getViewLayout(currentView);
-        RelativeLayout targetViewLayout = getViewLayout(targetView);
-
-        if (currentViewLayout != null && targetViewLayout != null) {
-            float directionOut = (targetView > currentView) ? -1000f : 1000f;
-            float directionIn = (targetView > currentView) ? 1000f : -1000f;
-
-            Utils.animateViewOut(currentViewLayout, directionOut).addListener(new android.animation.AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    currentViewLayout.setVisibility(View.GONE);
+        int userId = (int) userIdDouble;
+        Log.d(TAG, "displayCurrentUserInformation: Finding user by ID: " + userId);
+        FirebaseAction.findUserById(userId).addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                User user = task.getResult();
+                Log.d(TAG, "displayCurrentUserInformation: User found: " + user);
+                if (user instanceof Guest) {
+                    currentGuest = (Guest) user;
+                    Log.d(TAG, "displayCurrentUserInformation: currentGuest assigned: " + currentGuest);
+                    displayGuestInfo();
+                } else {
+                    Toast.makeText(this, "User is not a guest", Toast.LENGTH_SHORT).show();
                 }
-            });
-
-            Utils.animateViewIn(targetViewLayout, directionIn).addListener(new android.animation.AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    currentView = targetView;
+            } else {
+                Exception e = task.getException();
+                if (e != null) {
+                    Log.e(TAG, "Failed to retrieve user", e);
+                    Toast.makeText(this, "Failed to retrieve user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Failed to retrieve user: Unknown error", Toast.LENGTH_SHORT).show();
                 }
-            });;
+            }
+        });
+    }
 
+    private void displayGuestInfo() {
+        Log.d(TAG, "displayGuestInfo: Displaying guest information");
+        View view1 = viewAnimator.getChildAt(0);
+        TextView nameTextView = view1.findViewById(R.id.nameTextView);
+        TextView birthdayTextView = view1.findViewById(R.id.birthdayTextView);
+        TextView roleTextView = view1.findViewById(R.id.roleTextView);
+        TextView balanceTextView = view1.findViewById(R.id.balanceTextView);
 
+        if (nameTextView == null || birthdayTextView == null || roleTextView == null || balanceTextView == null) {
+            Log.e(TAG, "displayGuestInfo: One or more TextView elements are null");
+            return;
+        }
+
+        nameTextView.setText(currentGuest.getName());
+        birthdayTextView.setText(currentGuest.getDateOfBirth());
+        roleTextView.setText(currentGuest.getRole());
+        balanceTextView.setText(String.valueOf(currentGuest.getBalance()));
+
+        Log.d(TAG, "displayGuestInfo: Guest information displayed successfully");
+    }
+
+    private void addBalanceEvent() {
+        if (currentGuest != null) {
+            Intent intent = new Intent(GuestMainActivity.this, AddBalanceActivity.class);
+            intent.putExtra("id", currentGuest.getId());
+            intent.putExtra("balance", currentGuest.getBalance());
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Guest information is not available", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private RelativeLayout getViewLayout(int viewNumber) {
-        switch (viewNumber) {
-            case 1:
-                return view1;
-            case 2:
-                return view2;
-            case 3:
-                return view3;
-            default:
-                return null;
-        }
-    }
-
-    public void logOut(View view) {
+    public void logOut() {
         mAuth.signOut();
         db.deleteUser();
         Intent intent = new Intent(GuestMainActivity.this, LoginActivity.class);
@@ -108,4 +156,5 @@ public class GuestMainActivity extends AppCompatActivity {
         super.onDestroy();
         db.close();
     }
+
 }

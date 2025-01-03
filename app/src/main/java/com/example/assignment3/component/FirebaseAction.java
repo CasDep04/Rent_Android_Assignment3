@@ -145,27 +145,30 @@ public class FirebaseAction {
 
     public static Task<User> findUserById(int userId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Log.d("FirebaseAction", "Finding user by ID: " + userId);
         return db.collection("users").document(String.valueOf(userId)).get().continueWith(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                DocumentSnapshot snapshot = task.getResult();
-                if (snapshot.exists()) {
-                    // Determine the type based on a field, e.g., "role"
-                    String role = snapshot.getString("role");
-                    if ("guest".equals(role)) {
-                        return snapshot.toObject(Guest.class);
-                    } else if ("host".equals(role)) {
-                        return snapshot.toObject(Host.class);
-                    } else {
-                        return snapshot.toObject(User.class);
-                    }
+            if (!task.isSuccessful() || task.getResult() == null) {
+                throw task.getException() != null ? task.getException() : new Exception("Failed to find user");
+            }
+    
+            DocumentSnapshot snapshot = task.getResult();
+            if (snapshot.exists()) {
+                String role = snapshot.getString("role");
+                Log.d("FirebaseAction", "User found with role: " + role);
+                if ("guest".equals(role)) {
+                    return snapshot.toObject(Guest.class);
+                } else if ("host".equals(role)) {
+                    return snapshot.toObject(Host.class);
                 } else {
-                    throw new Exception("User not found");
+                    return snapshot.toObject(User.class);
                 }
             } else {
-                throw task.getException() != null ? task.getException() : new Exception("Failed to find user");
+                Log.e("FirebaseAction", "User not found");
+                throw new Exception("User not found");
             }
         });
     }
+    
 //   sample
 //      double userIdDouble = intent.getDoubleExtra("id", 0);
 //        if (userIdDouble != 0) {
