@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class GuestMainActivity extends AppCompatActivity {
 
     private static final String TAG = "GuestMainActivity";
+    private static final int ADD_BALANCE_REQUEST_CODE = 1;
 
     private FirebaseAuth mAuth;
     private DatabaseManager db;
@@ -56,7 +57,12 @@ public class GuestMainActivity extends AppCompatActivity {
         Button add_balance_button = view1.findViewById(R.id.add_balance_button);
         Button logout_button = view1.findViewById(R.id.logout_button);
 
-        add_balance_button.setOnClickListener(v -> addBalanceEvent());
+        add_balance_button.setOnClickListener(v -> {
+            Intent intent = new Intent(GuestMainActivity.this, AddBalanceActivity.class);
+            intent.putExtra("id", currentGuest.getId());
+            intent.putExtra("balance", currentGuest.getBalance());
+            startActivityForResult(intent, ADD_BALANCE_REQUEST_CODE);
+        });
         logout_button.setOnClickListener(v -> logOut());
         //View 2
 
@@ -123,12 +129,12 @@ public class GuestMainActivity extends AppCompatActivity {
             Log.e(TAG, "displayGuestInfo: One or more TextView elements are null");
             return;
         }
-
-        nameTextView.setText(currentGuest.getName());
-        birthdayTextView.setText(currentGuest.getDateOfBirth());
-        roleTextView.setText(currentGuest.getRole());
-        balanceTextView.setText(String.valueOf(currentGuest.getBalance()));
-
+        if(currentGuest !=null) {
+            nameTextView.setText(currentGuest.getName());
+            birthdayTextView.setText(currentGuest.getDateOfBirth());
+            roleTextView.setText(currentGuest.getRole());
+            balanceTextView.setText(String.valueOf(currentGuest.getBalance()));
+        }
         Log.d(TAG, "displayGuestInfo: Guest information displayed successfully");
     }
 
@@ -149,6 +155,32 @@ public class GuestMainActivity extends AppCompatActivity {
         Intent intent = new Intent(GuestMainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        //displayGuestInfo();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ADD_BALANCE_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                double newBalance = data.getDoubleExtra("selectedBalance", currentGuest.getBalance());
+                currentGuest.setBalance(newBalance);
+                FirebaseAction.editUserInFirestore(currentGuest)
+                    .addOnSuccessListener(aVoid -> {
+                        displayGuestInfo();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Failed to update user in Firestore", e);
+                        Toast.makeText(this, "Failed to update user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+            }
+        }
     }
 
     @Override
