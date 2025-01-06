@@ -131,8 +131,8 @@ public class FirebaseAction {
 
     public static Task<Void> deleteUserFromFirestore(int userId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         //Authentication: delete user only
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
             mAuth.getCurrentUser().delete()
                     .addOnSuccessListener(aVoid -> Log.d("DeleteUser", "Firebase Authentication account deleted successfully."))

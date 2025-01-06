@@ -1,5 +1,6 @@
 package com.example.assignment3;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.assignment3.component.FirebaseAction;
@@ -64,6 +66,11 @@ public class GuestMainActivity extends AppCompatActivity {
             startActivityForResult(intent, ADD_BALANCE_REQUEST_CODE);
         });
         logout_button.setOnClickListener(v -> logOut());
+        
+        // Set up the Delete Account button
+        Button deleteAccountButton = findViewById(R.id.delete_account_button);
+        deleteAccountButton.setOnClickListener(v -> showDeleteAccountDialog());
+
         //View 2
 
         //View 3
@@ -181,6 +188,39 @@ public class GuestMainActivity extends AppCompatActivity {
                     });
             }
         }
+    }
+
+    private void showDeleteAccountDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("Delete Account")
+            .setMessage("Are you sure you want to delete your account?")
+            .setPositiveButton("Yes", (dialog, which) -> deleteAccount())
+            .setNegativeButton("No", null)
+            .show();
+    }
+
+    private void deleteAccount() {
+        if (currentGuest != null) {
+            FirebaseAction.deleteUserFromFirestore(currentGuest.getId())
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "User deleted successfully from Firestore");
+                    Toast.makeText(this, "Account deleted successfully", Toast.LENGTH_SHORT).show();
+                    // Redirect to login or main activity
+                    Intent intent = new Intent(GuestMainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to delete user from Firestore", e);
+                    Toast.makeText(this, "Failed to delete account: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+        } else {
+            Log.e(TAG, "deleteAccount: currentGuest is null");
+            Toast.makeText(this, "Failed to delete account: User not found", Toast.LENGTH_SHORT).show();
+        }
+        db.deleteUser();
+        Intent intent = new Intent(GuestMainActivity.this, LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override
