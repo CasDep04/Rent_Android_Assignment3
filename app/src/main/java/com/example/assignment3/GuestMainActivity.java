@@ -5,18 +5,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 import android.widget.Toast;
+import android.widget.ViewAnimator;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.assignment3.component.FirebaseAction;
 import com.example.assignment3.component.Localdatabase.DatabaseManager;
 import com.example.assignment3.Entity.Guest;
+import com.example.assignment3.Entity.RentalRecord;
 import com.example.assignment3.Entity.User;
+import com.example.assignment3.component.adapter.RentalRecordAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuestMainActivity extends AppCompatActivity {
 
@@ -28,7 +35,9 @@ public class GuestMainActivity extends AppCompatActivity {
     private ViewAnimator viewAnimator;
     private int currentView = -1; // Initialize to an invalid index
     private Guest currentGuest;
-    private View profileView, mapView, statusView;
+    private ListView recordListView;
+    private List<RentalRecord> rentalRecords = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,16 +75,14 @@ public class GuestMainActivity extends AppCompatActivity {
             startActivityForResult(intent, ADD_BALANCE_REQUEST_CODE);
         });
         logout_button.setOnClickListener(v -> logOut());
-        
+
         // Set up the Delete Account button
         Button deleteAccountButton = findViewById(R.id.delete_account_button);
         deleteAccountButton.setOnClickListener(v -> showDeleteAccountDialog());
 
-        //View 2
-
         //View 3
-        // Set up button click listeners for each view
-        //setupViewButtons();
+        recordListView = view3.findViewById(R.id.recordListView);
+        setupListView();
 
         // Display current user information
         displayCurrentUserInformation();
@@ -229,4 +236,23 @@ public class GuestMainActivity extends AppCompatActivity {
         db.close();
     }
 
+    private void setupListView() {
+        // Sample data for the ListView
+        rentalRecords.add(new RentalRecord(1, 1, 1, 1, "2023-01-01", "2023-01-10", 100.0, "Completed"));
+        rentalRecords.add(new RentalRecord(2, 2, 2, 2, "2023-02-01", "2023-02-10", 200.0, "Pending"));
+
+        // Create a custom adapter
+        RentalRecordAdapter adapter = new RentalRecordAdapter(this, rentalRecords);
+
+        // Set the adapter to the ListView
+        recordListView.setAdapter(adapter);
+
+        // Set an item click listener to navigate to RecordDetailsActivity
+        recordListView.setOnItemClickListener((parent, view, position, id) -> {
+            RentalRecord selectedRecord = rentalRecords.get(position);
+            Intent intent = new Intent(GuestMainActivity.this, RecordDetailsActivity.class);
+            intent.putExtra("recordID", selectedRecord.getId());
+            startActivity(intent);
+        });
+    }
 }

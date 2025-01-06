@@ -19,7 +19,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FirebaseAction {
+
+    private static final String TAG = "FirebaseAction";
 
     public static Task<Void> addLocationToFirestore(Location location) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -224,6 +229,36 @@ public class FirebaseAction {
                 return task.getResult().toObject(RentalRecord.class);
             } else {
                 throw task.getException() != null ? task.getException() : new Exception("Failed to find rental record");
+            }
+        });
+    }
+
+    public static Task<List<RentalRecord>> findRecordsByGuestId(int guestId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        return db.collection("rentalRecords").whereEqualTo("guestId", guestId).get().continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                List<RentalRecord> records = new ArrayList<>();
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                    records.add(document.toObject(RentalRecord.class));
+                }
+                return records;
+            } else {
+                throw task.getException() != null ? task.getException() : new Exception("Failed to find rental records by guestId");
+            }
+        });
+    }
+
+    public static Task<List<RentalRecord>> findRecordsByHostId(int hostId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        return db.collection("rentalRecords").whereEqualTo("hostId", hostId).get().continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                List<RentalRecord> records = new ArrayList<>();
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                    records.add(document.toObject(RentalRecord.class));
+                }
+                return records;
+            } else {
+                throw task.getException() != null ? task.getException() : new Exception("Failed to find rental records by hostId");
             }
         });
     }

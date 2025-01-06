@@ -10,4 +10,11 @@
         android:text="This is View 3"
         android:layout_centerHorizontal="true" />
 
+    <ListView
+        android:id="@+id/recordListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView"
+        android:layout_marginTop="16dp" />
+
 </RelativeLayout>
