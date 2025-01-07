@@ -262,4 +262,64 @@ public class FirebaseAction {
             }
         });
     }
+
+    public static Task<List<User>> findAllUsers() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        return db.collection("users").get().continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                List<User> users = new ArrayList<>();
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                    users.add(document.toObject(User.class));
+                }
+                return users;
+            } else {
+                throw task.getException() != null ? task.getException() : new Exception("Failed to find users");
+            }
+        });
+    }
+
+    public static Task<List<RentalRecord>> findAllRecords() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        return db.collection("rentalRecords").get().continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                List<RentalRecord> records = new ArrayList<>();
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                    records.add(document.toObject(RentalRecord.class));
+                }
+                return records;
+            } else {
+                throw task.getException() != null ? task.getException() : new Exception("Failed to find rental records");
+            }
+        });
+    }
+
+    public static Task<List<Location>> findAllLocations() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        return db.collection("locations").get().continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                List<Location> locations = new ArrayList<>();
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                    locations.add(document.toObject(Location.class));
+                }
+                return locations;
+            } else {
+                throw task.getException() != null ? task.getException() : new Exception("Failed to find locations");
+            }
+        });
+    }
+
+    public static Task<List<Review>> findAllReviews() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        return db.collection("reviews").get().continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                List<Review> reviews = new ArrayList<>();
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                    reviews.add(document.toObject(Review.class));
+                }
+                return reviews;
+            } else {
+                throw task.getException() != null ? task.getException() : new Exception("Failed to find reviews");
+            }
+        });
+    }
 }

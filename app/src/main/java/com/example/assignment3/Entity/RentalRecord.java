@@ -10,6 +10,9 @@ public class RentalRecord {
     private double totalPrice;
     private String status;  //(pending, accepted, rejected)
 
+    public RentalRecord(){
+
+    }
     // Constructor with the new status parameter
     public RentalRecord(int id, int guestId, int hostId, int locationId, String startDate, String endDate, double price, String status) {
         this.id = id;

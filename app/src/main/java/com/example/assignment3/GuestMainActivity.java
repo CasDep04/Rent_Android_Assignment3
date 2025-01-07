@@ -82,7 +82,6 @@ public class GuestMainActivity extends AppCompatActivity {
 
         //View 3
         recordListView = view3.findViewById(R.id.recordListView);
-        setupListView();
 
         // Display current user information
         displayCurrentUserInformation();
@@ -116,6 +115,7 @@ public class GuestMainActivity extends AppCompatActivity {
                     currentGuest = (Guest) user;
                     Log.d(TAG, "displayCurrentUserInformation: currentGuest assigned: " + currentGuest);
                     displayGuestInfo();
+                    setupListView(); // Setup the ListView after currentGuest is assigned
                 } else {
                     Toast.makeText(this, "User is not a guest", Toast.LENGTH_SHORT).show();
                 }
@@ -237,22 +237,38 @@ public class GuestMainActivity extends AppCompatActivity {
     }
 
     private void setupListView() {
-        // Sample data for the ListView
-        rentalRecords.add(new RentalRecord(1, 1, 1, 1, "2023-01-01", "2023-01-10", 100.0, "Completed"));
-        rentalRecords.add(new RentalRecord(2, 2, 2, 2, "2023-02-01", "2023-02-10", 200.0, "Pending"));
+        if (currentGuest == null) {
+            Log.e(TAG, "setupListView: currentGuest is null");
+            return;
+        }
 
-        // Create a custom adapter
-        RentalRecordAdapter adapter = new RentalRecordAdapter(this, rentalRecords);
+        FirebaseAction.findRecordsByGuestId(currentGuest.getId()).addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                rentalRecords.clear();
+                rentalRecords.addAll(task.getResult());
 
-        // Set the adapter to the ListView
-        recordListView.setAdapter(adapter);
+                // Create a custom adapter
+                RentalRecordAdapter adapter = new RentalRecordAdapter(this, rentalRecords);
 
-        // Set an item click listener to navigate to RecordDetailsActivity
-        recordListView.setOnItemClickListener((parent, view, position, id) -> {
-            RentalRecord selectedRecord = rentalRecords.get(position);
-            Intent intent = new Intent(GuestMainActivity.this, RecordDetailsActivity.class);
-            intent.putExtra("recordID", selectedRecord.getId());
-            startActivity(intent);
+                // Set the adapter to the ListView
+                recordListView.setAdapter(adapter);
+
+                // Set an item click listener to navigate to RecordDetailsActivity
+                recordListView.setOnItemClickListener((parent, view, position, id) -> {
+                    RentalRecord selectedRecord = rentalRecords.get(position);
+                    Intent intent = new Intent(GuestMainActivity.this, RecordDetailsActivity.class);
+                    intent.putExtra("recordID", selectedRecord.getId());
+                    startActivity(intent);
+                });
+            } else {
+                Exception e = task.getException();
+                if (e != null) {
+                    Log.e(TAG, "Failed to retrieve rental records", e);
+                    Toast.makeText(this, "Failed to retrieve rental records: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Failed to retrieve rental records: Unknown error", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 }

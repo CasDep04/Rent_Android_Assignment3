@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- Review ID -->
+    <TextView
+        android:id="@+id/textViewReviewId"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Review ID:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textViewReviewIdValue"
+        app:layout_constraintHorizontal_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/textViewReviewIdValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textViewReviewId"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Location ID -->
+    <TextView
+        android:id="@+id/textViewLocationId"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Location ID:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/textViewReviewId"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textViewLocationIdValue"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/textViewLocationIdValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/textViewReviewId"
+        app:layout_constraintStart_toEndOf="@id/textViewLocationId"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Rating -->
+    <TextView
+        android:id="@+id/textViewRating"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Rating:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/textViewLocationId"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textViewRatingValue"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/textViewRatingValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/textViewLocationId"
+        app:layout_constraintStart_toEndOf="@id/textViewRating"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Comments -->
+    <TextView
+        android:id="@+id/textViewComments"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Comments:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/textViewRating"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textViewCommentsValue"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/textViewCommentsValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/textViewRating"
+        app:layout_constraintStart_toEndOf="@id/textViewComments"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

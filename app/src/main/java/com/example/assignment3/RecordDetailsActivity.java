@@ -1,10 +1,13 @@
 package com.example.assignment3;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.assignment3.Entity.RentalRecord;
+import com.example.assignment3.Entity.User;
+import com.example.assignment3.Entity.Location;
 import com.example.assignment3.component.FirebaseAction;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -12,13 +15,14 @@ import androidx.annotation.NonNull;
 
 public class RecordDetailsActivity extends AppCompatActivity {
 
-    private TextView guestIdTextView;
-    private TextView hostIdTextView;
-    private TextView locationIdTextView;
+    private TextView guestNameTextView;
+    private TextView hostNameTextView;
+    private TextView locationNameTextView;
     private TextView startDateTextView;
     private TextView endDateTextView;
     private TextView totalPriceTextView;
     private TextView statusTextView;
+    private Button logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,13 +30,14 @@ public class RecordDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_record_details);
 
         // Initialize TextViews
-        guestIdTextView = findViewById(R.id.textViewGuestIdValue);
-        hostIdTextView = findViewById(R.id.textViewHostIdValue);
-        locationIdTextView = findViewById(R.id.textViewLocationIdValue);
+        guestNameTextView = findViewById(R.id.textViewGuestNameValue);
+        hostNameTextView = findViewById(R.id.textViewHostNameValue);
+        locationNameTextView = findViewById(R.id.textViewLocationNameValue);
         startDateTextView = findViewById(R.id.textViewStartDateValue);
         endDateTextView = findViewById(R.id.textViewEndDateValue);
         totalPriceTextView = findViewById(R.id.textViewTotalPriceValue);
         statusTextView = findViewById(R.id.textViewStatusValue);
+        logoutButton = findViewById(R.id.buttonLogout);
 
         // Get the RentalRecord ID from the intent
         int recordId = getIntent().getIntExtra("recordID", 0);
@@ -53,12 +58,12 @@ public class RecordDetailsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // Set logout button click listener
+        logoutButton.setOnClickListener(v -> finish());
     }
 
     private void displayRecordDetails(RentalRecord record) {
-        guestIdTextView.setText(String.valueOf(record.getGuestId()));
-        hostIdTextView.setText(String.valueOf(record.getHostId()));
-        locationIdTextView.setText(String.valueOf(record.getLocationId()));
         startDateTextView.setText(record.getStartDate());
         endDateTextView.setText(record.getEndDate());
         totalPriceTextView.setText(String.valueOf(record.getTotalPrice()));
@@ -79,5 +84,44 @@ public class RecordDetailsActivity extends AppCompatActivity {
                 statusTextView.setTextColor(getResources().getColor(android.R.color.black));
                 break;
         }
+
+        // Fetch and display guest name
+        FirebaseAction.findUserById(record.getGuestId()).addOnCompleteListener(new OnCompleteListener<User>() {
+            @Override
+            public void onComplete(@NonNull Task<User> task) {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    User guest = task.getResult();
+                    guestNameTextView.setText(guest.getName());
+                } else {
+                    guestNameTextView.setText("Unknown Guest");
+                }
+            }
+        });
+
+        // Fetch and display host name
+        FirebaseAction.findUserById(record.getHostId()).addOnCompleteListener(new OnCompleteListener<User>() {
+            @Override
+            public void onComplete(@NonNull Task<User> task) {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    User host = task.getResult();
+                    hostNameTextView.setText(host.getName());
+                } else {
+                    hostNameTextView.setText("Unknown Host");
+                }
+            }
+        });
+
+        // Fetch and display location name
+        FirebaseAction.findLocationById(record.getLocationId()).addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    Location location = task.getResult();
+                    locationNameTextView.setText(location.getAddress());
+                } else {
+                    locationNameTextView.setText("Unknown Location");
+                }
+            }
+        });
     }
 }
