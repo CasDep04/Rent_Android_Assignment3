@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/host_home"
+        android:title="Home"
+        android:icon="@drawable/baseline_home_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <item
+        android:id="@+id/host_homestay"
+        android:title="Hotel"
+        android:icon="@drawable/baseline_hotel_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <item
+        android:id="@+id/host_notification"
+        android:title="Notification"
+        android:icon="@drawable/baseline_notifications_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <item
+        android:id="@+id/host_profile"
+        android:title="Profile"
+        android:icon="@drawable/baseline_person_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</menu>

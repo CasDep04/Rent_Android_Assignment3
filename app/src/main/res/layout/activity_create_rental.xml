@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateRentalActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Homestay Renting"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+        <EditText
+            android:id="@+id/homestay_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Homestay Name"
+            android:inputType="text"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/homestay_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Homestay Address"
+                android:inputType="text"/>
+
+            <ImageButton
+                android:id="@+id/map_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_mapmode"
+                android:contentDescription="Map Icon"/>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/homestay_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Price per Night"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Property Type"/>
+
+        <RadioGroup
+            android:id="@+id/property_type_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/property_type_house"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="House"/>
+
+            <RadioButton
+                android:id="@+id/property_type_villa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Villa"/>
+
+            <RadioButton
+                android:id="@+id/property_type_apartment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Apartment"/>
+
+            <RadioButton
+                android:id="@+id/property_type_penthouse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Penthouse"/>
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Facilities"/>
+
+        <CheckBox
+            android:id="@+id/facility_wifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Free Wifi"/>
+
+        <CheckBox
+            android:id="@+id/facility_airport_shuttle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Airport Shuttle"/>
+
+        <CheckBox
+            android:id="@+id/facility_laundry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Laundry Services"/>
+
+        <CheckBox
+            android:id="@+id/facility_kitchen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shared Kitchen"/>
+
+        <Button
+            android:id="@+id/select_image_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Image"/>
+
+        <ImageView
+            android:id="@+id/selected_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/publish_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Publish"/>
+    </LinearLayout>
+</ScrollView>
