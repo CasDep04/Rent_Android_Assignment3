@@ -20,6 +20,11 @@ import com.example.assignment3.Entity.Guest;
 import com.example.assignment3.Entity.RentalRecord;
 import com.example.assignment3.Entity.User;
 import com.example.assignment3.component.adapter.RentalRecordAdapter;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -80,12 +85,35 @@ public class GuestMainActivity extends AppCompatActivity {
         Button deleteAccountButton = findViewById(R.id.delete_account_button);
         deleteAccountButton.setOnClickListener(v -> showDeleteAccountDialog());
 
+
+        // view 2 for map layout
+        // Find the SupportMapFragment by its ID
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(googleMap -> {
+                // Customize the map
+                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+                // Add a marker (optional)
+                LatLng sampleLocation = new LatLng(-34, 151);
+                googleMap.addMarker(new MarkerOptions().position(sampleLocation).title("Marker in Sydney"));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sampleLocation, 10));
+            });
+        } else {
+            Log.e("GuestMainActivity", "Map fragment not found!");
+        }
+
+
+
+
         //View 3
         recordListView = view3.findViewById(R.id.recordListView);
 
         // Display current user information
         displayCurrentUserInformation();
     }
+
 
     private void showView(int viewIndex) {
         if (viewIndex == currentView) return;

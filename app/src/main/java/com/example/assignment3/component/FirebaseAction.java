@@ -10,7 +10,7 @@ import com.example.assignment3.Entity.Location;
 import com.example.assignment3.Entity.Review;
 import com.example.assignment3.Entity.RentalRecord;
 import com.example.assignment3.Entity.User;
-import com.example.assignment3.GuestMainActivity;
+//import com.example.assignment3.GuestMainActivity;
 import com.example.assignment3.HostMainActivity;
 import com.example.assignment3.RegistrationInfoActivity;
 import com.google.android.gms.tasks.Task;
