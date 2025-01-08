@@ -2,9 +2,10 @@ package com.example.assignment3;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.ViewAnimator;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.assignment3.Entity.User;
@@ -23,8 +24,10 @@ import java.util.List;
 public class AdminMainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private ViewAnimator viewAnimator;
-    private Button buttonUsers, buttonLocations, buttonReviews, buttonRecords;
+    private ListView listView;
+    private Button buttonAdd, buttonLogout;
+    private ImageButton buttonUsers, buttonLocations, buttonReviews, buttonRecords;
+    private View gridLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,19 +36,20 @@ public class AdminMainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        viewAnimator = findViewById(R.id.viewAnimator);
+        listView = findViewById(R.id.listView);
+        buttonAdd = findViewById(R.id.buttonAdd);
+        buttonLogout = findViewById(R.id.buttonLogout);
         buttonUsers = findViewById(R.id.buttonUsers);
         buttonLocations = findViewById(R.id.buttonLocations);
         buttonReviews = findViewById(R.id.buttonReviews);
         buttonRecords = findViewById(R.id.buttonRecords);
+        gridLayout = findViewById(R.id.gridLayout);
 
         buttonUsers.setOnClickListener(v -> loadUsers());
         buttonLocations.setOnClickListener(v -> loadLocations());
         buttonReviews.setOnClickListener(v -> loadReviews());
         buttonRecords.setOnClickListener(v -> loadRecords());
-
-        // Load users by default
-        loadUsers();
+        buttonLogout.setOnClickListener(v -> signOut());
     }
 
     private void loadUsers() {
@@ -53,9 +57,8 @@ public class AdminMainActivity extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 List<User> users = task.getResult();
                 UserAdapter adapter = new UserAdapter(this, users);
-                ListView listView = findViewById(R.id.listViewUsers);
                 listView.setAdapter(adapter);
-                viewAnimator.setDisplayedChild(0);
+                showListView();
             }
         });
     }
@@ -65,9 +68,8 @@ public class AdminMainActivity extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 List<Location> locations = task.getResult();
                 LocationAdapter adapter = new LocationAdapter(this, locations);
-                ListView listView = findViewById(R.id.listViewLocations);
                 listView.setAdapter(adapter);
-                viewAnimator.setDisplayedChild(1);
+                showListView();
             }
         });
     }
@@ -77,9 +79,8 @@ public class AdminMainActivity extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 List<Review> reviews = task.getResult();
                 ReviewAdapter adapter = new ReviewAdapter(this, reviews);
-                ListView listView = findViewById(R.id.listViewReviews);
                 listView.setAdapter(adapter);
-                viewAnimator.setDisplayedChild(2);
+                showListView();
             }
         });
     }
@@ -89,10 +90,22 @@ public class AdminMainActivity extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 List<RentalRecord> records = task.getResult();
                 RentalRecordAdapter adapter = new RentalRecordAdapter(this, records);
-                ListView listView = findViewById(R.id.listViewRecords);
                 listView.setAdapter(adapter);
-                viewAnimator.setDisplayedChild(3);
+                showListView();
             }
         });
+    }
+
+    private void showListView() {
+        gridLayout.setVisibility(View.GONE);
+        listView.setVisibility(View.VISIBLE);
+        buttonAdd.setVisibility(View.VISIBLE);
+    }
+
+    private void signOut() {
+        mAuth.signOut();
+        Intent intent = new Intent(AdminMainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
