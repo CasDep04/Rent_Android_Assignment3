@@ -13,6 +13,7 @@ import com.example.assignment3.Entity.Location;
 import com.example.assignment3.Entity.Review;
 import com.example.assignment3.Entity.RentalRecord;
 import com.example.assignment3.component.FirebaseAction;
+import com.example.assignment3.component.Localdatabase.DatabaseManager;
 import com.example.assignment3.component.adapter.UserAdapter;
 import com.example.assignment3.component.adapter.LocationAdapter;
 import com.example.assignment3.component.adapter.ReviewAdapter;
@@ -29,11 +30,14 @@ public class AdminMainActivity extends AppCompatActivity {
     private ImageButton buttonUsers, buttonLocations, buttonReviews, buttonRecords;
     private View gridLayout;
 
+    private DatabaseManager db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
 
+        db = new DatabaseManager(this);
+        db.open();
         mAuth = FirebaseAuth.getInstance();
 
         listView = findViewById(R.id.listView);
@@ -114,8 +118,16 @@ public class AdminMainActivity extends AppCompatActivity {
 
     private void signOut() {
         mAuth.signOut();
+
+        db.deleteUser();
         Intent intent = new Intent(AdminMainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 }
