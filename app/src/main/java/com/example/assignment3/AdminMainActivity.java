@@ -25,7 +25,7 @@ public class AdminMainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private ListView listView;
-    private Button buttonAdd, buttonLogout;
+    private Button buttonAdd, buttonBack, buttonLogout;
     private ImageButton buttonUsers, buttonLocations, buttonReviews, buttonRecords;
     private View gridLayout;
 
@@ -38,6 +38,7 @@ public class AdminMainActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.listView);
         buttonAdd = findViewById(R.id.buttonAdd);
+        buttonBack = findViewById(R.id.buttonBack);
         buttonLogout = findViewById(R.id.buttonLogout);
         buttonUsers = findViewById(R.id.buttonUsers);
         buttonLocations = findViewById(R.id.buttonLocations);
@@ -50,6 +51,7 @@ public class AdminMainActivity extends AppCompatActivity {
         buttonReviews.setOnClickListener(v -> loadReviews());
         buttonRecords.setOnClickListener(v -> loadRecords());
         buttonLogout.setOnClickListener(v -> signOut());
+        buttonBack.setOnClickListener(v -> showGridLayout());
     }
 
     private void loadUsers() {
@@ -100,6 +102,14 @@ public class AdminMainActivity extends AppCompatActivity {
         gridLayout.setVisibility(View.GONE);
         listView.setVisibility(View.VISIBLE);
         buttonAdd.setVisibility(View.VISIBLE);
+        buttonBack.setVisibility(View.VISIBLE);
+    }
+
+    private void showGridLayout() {
+        gridLayout.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.GONE);
+        buttonAdd.setVisibility(View.GONE);
+        buttonBack.setVisibility(View.GONE);
     }
 
     private void signOut() {
