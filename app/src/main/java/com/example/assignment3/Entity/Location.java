@@ -9,6 +9,7 @@ public class Location {
     private double prices;
     private int hostId;
 
+    public Location(){}
     public Location(int id, String address, String city, String country, String description, double prices, int hostId) {
         this.id = id;
         this.address = address;

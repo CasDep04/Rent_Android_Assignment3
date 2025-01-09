@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
+
+    <!-- Location ID -->
+    <TextView
+        android:id="@+id/textViewLocationId"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="ID:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textViewLocationIdValue"
+        app:layout_constraintHorizontal_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/textViewLocationIdValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textViewLocationId"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Location Address -->
     <TextView
@@ -13,113 +36,67 @@
         android:text="Address:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewLocationId"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/textViewLocationAddressValue"
-        app:layout_constraintHorizontal_chainStyle="packed" />
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/textViewLocationAddressValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewLocationId"
         app:layout_constraintStart_toEndOf="@id/textViewLocationAddress"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
 
-    <!-- Location City -->
+    <!-- Location Price -->
     <TextView
-        android:id="@+id/textViewLocationCity"
+        android:id="@+id/textViewLocationPrice"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="City:"
+        android:text="Price:"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/textViewLocationAddress"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textViewLocationCityValue"
+        app:layout_constraintEnd_toStartOf="@id/textViewLocationPriceValue"
         app:layout_constraintHorizontal_chainStyle="packed"
         android:layout_marginTop="8dp" />
 
     <TextView
-        android:id="@+id/textViewLocationCityValue"
+        android:id="@+id/textViewLocationPriceValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/textViewLocationAddress"
-        app:layout_constraintStart_toEndOf="@id/textViewLocationCity"
+        app:layout_constraintStart_toEndOf="@id/textViewLocationPrice"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
-    <!-- Location Country -->
+    <!-- Host Name -->
     <TextView
-        android:id="@+id/textViewLocationCountry"
+        android:id="@+id/textViewHostName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Country:"
+        android:text="Host:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationCity"
+        app:layout_constraintTop_toBottomOf="@id/textViewLocationPrice"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textViewLocationCountryValue"
+        app:layout_constraintEnd_toStartOf="@id/textViewHostNameValue"
         app:layout_constraintHorizontal_chainStyle="packed"
         android:layout_marginTop="8dp" />
 
     <TextView
-        android:id="@+id/textViewLocationCountryValue"
+        android:id="@+id/textViewHostNameValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationCity"
-        app:layout_constraintStart_toEndOf="@id/textViewLocationCountry"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
-
-    <!-- Location Description -->
-    <TextView
-        android:id="@+id/textViewLocationDescription"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Description:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationCountry"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textViewLocationDescriptionValue"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        android:layout_marginTop="8dp" />
-
-    <TextView
-        android:id="@+id/textViewLocationDescriptionValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationCountry"
-        app:layout_constraintStart_toEndOf="@id/textViewLocationDescription"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
-
-    <!-- Location Prices -->
-    <TextView
-        android:id="@+id/textViewLocationPrices"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Prices:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationDescription"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textViewLocationPricesValue"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        android:layout_marginTop="8dp" />
-
-    <TextView
-        android:id="@+id/textViewLocationPricesValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationDescription"
-        app:layout_constraintStart_toEndOf="@id/textViewLocationPrices"
+        app:layout_constraintTop_toBottomOf="@id/textViewLocationPrice"
+        app:layout_constraintStart_toEndOf="@id/textViewHostName"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 

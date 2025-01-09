@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.widget.ArrayAdapter;
 
-import com.example.assignment3.Entity.Guest;
-import com.example.assignment3.Entity.Host;
 import com.example.assignment3.Entity.User;
 import com.example.assignment3.R;
 
@@ -36,22 +34,15 @@ public class UserAdapter extends ArrayAdapter<User> {
 
         User user = users.get(position);
 
-        TextView userNameTextView = convertView.findViewById(R.id.textViewUserNameValue);
+        TextView userIdTextView = convertView.findViewById(R.id.textViewUserIdValue);
         TextView userEmailTextView = convertView.findViewById(R.id.textViewUserEmailValue);
+        TextView userNameTextView = convertView.findViewById(R.id.textViewUserNameValue);
         TextView userRoleTextView = convertView.findViewById(R.id.textViewUserRoleValue);
-        TextView specificInfoTextView = convertView.findViewById(R.id.textViewSpecificInfoValue);
 
-        userNameTextView.setText(user.getName());
+        userIdTextView.setText(String.valueOf(user.getId()));
         userEmailTextView.setText(user.getEmail());
+        userNameTextView.setText(user.getName());
         userRoleTextView.setText(user.getRole());
-
-        if (user instanceof Guest) {
-            Guest guest = (Guest) user;
-            specificInfoTextView.setText(guest.getPreferences());
-        } else if (user instanceof Host) {
-            Host host = (Host) user;
-            specificInfoTextView.setText(String.valueOf(host.getTotalProperties()));
-        }
 
         return convertView;
     }

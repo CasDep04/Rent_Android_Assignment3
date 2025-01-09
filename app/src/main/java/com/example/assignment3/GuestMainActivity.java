@@ -1,11 +1,9 @@
 package com.example.assignment3;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,6 +12,7 @@ import android.widget.ViewAnimator;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.assignment3.EntityDetails.RecordDetailsActivity;
 import com.example.assignment3.component.FirebaseAction;
 import com.example.assignment3.component.Localdatabase.DatabaseManager;
 import com.example.assignment3.Entity.Guest;
@@ -36,6 +35,7 @@ public class GuestMainActivity extends AppCompatActivity {
     private static final int ADD_BALANCE_REQUEST_CODE = 1;
 
     private FirebaseAuth mAuth;
+
     private DatabaseManager db;
     private ViewAnimator viewAnimator;
     private int currentView = -1; // Initialize to an invalid index
@@ -48,10 +48,10 @@ public class GuestMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guest_main);
 
+
+        mAuth = FirebaseAuth.getInstance();
         db = new DatabaseManager(this);
         db.open();
-        mAuth = FirebaseAuth.getInstance();
-
         Button buttonView1 = findViewById(R.id.button1);
         Button buttonView2 = findViewById(R.id.button2);
         Button buttonView3 = findViewById(R.id.button3);

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.assignment3.R;
 import com.example.assignment3.LoginActivity;
+import com.example.assignment3.component.Localdatabase.DatabaseManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -26,6 +27,7 @@ public class HostProfile extends Fragment {
     FirebaseUser user;
     Button logoutButton;
     TextView greetingsText;
+    DatabaseManager localDB;
 
     @Nullable
     @Override
@@ -45,6 +47,8 @@ public class HostProfile extends Fragment {
         logoutButton = view.findViewById(R.id.logout_btn);
         user = auth.getCurrentUser();
 
+        localDB = new DatabaseManager(view.getContext());
+        localDB.open();
         if (user == null) {
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
@@ -67,10 +71,19 @@ public class HostProfile extends Fragment {
         }
 
         logoutButton.setOnClickListener(view1 -> {
-            FirebaseAuth.getInstance().signOut();
+            auth.signOut();
+
+            localDB.deleteUser();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
             getActivity().finish();
+
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        localDB.close();
+        super.onDestroyView();
     }
 }

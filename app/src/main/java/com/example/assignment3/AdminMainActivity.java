@@ -2,10 +2,12 @@ package com.example.assignment3;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.assignment3.Entity.User;
@@ -29,7 +31,7 @@ public class AdminMainActivity extends AppCompatActivity {
     private Button buttonAdd, buttonBack, buttonLogout;
     private ImageButton buttonUsers, buttonLocations, buttonReviews, buttonRecords;
     private View gridLayout;
-
+    private int currentView = 0;
     private DatabaseManager db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +45,7 @@ public class AdminMainActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         buttonAdd = findViewById(R.id.buttonAdd);
         buttonBack = findViewById(R.id.buttonBack);
-        buttonLogout = findViewById(R.id.buttonLogout);
+        buttonLogout = findViewById(R.id.goBackButton);
         buttonUsers = findViewById(R.id.buttonUsers);
         buttonLocations = findViewById(R.id.buttonLocations);
         buttonReviews = findViewById(R.id.buttonReviews);
@@ -56,6 +58,7 @@ public class AdminMainActivity extends AppCompatActivity {
         buttonRecords.setOnClickListener(v -> loadRecords());
         buttonLogout.setOnClickListener(v -> signOut());
         buttonBack.setOnClickListener(v -> showGridLayout());
+        buttonAdd.setOnClickListener(v -> addNewData());
     }
 
     private void loadUsers() {
@@ -64,9 +67,11 @@ public class AdminMainActivity extends AppCompatActivity {
                 List<User> users = task.getResult();
                 UserAdapter adapter = new UserAdapter(this, users);
                 listView.setAdapter(adapter);
+                buttonAdd.setText("Add New User");
+                currentView = 1;
                 showListView();
             }
-        });
+        }).addOnFailureListener(this::handleFailure);
     }
 
     private void loadLocations() {
@@ -75,9 +80,11 @@ public class AdminMainActivity extends AppCompatActivity {
                 List<Location> locations = task.getResult();
                 LocationAdapter adapter = new LocationAdapter(this, locations);
                 listView.setAdapter(adapter);
+                buttonAdd.setText("Add New Location");
+                currentView = 2;
                 showListView();
             }
-        });
+        }).addOnFailureListener(this::handleFailure);
     }
 
     private void loadReviews() {
@@ -86,9 +93,11 @@ public class AdminMainActivity extends AppCompatActivity {
                 List<Review> reviews = task.getResult();
                 ReviewAdapter adapter = new ReviewAdapter(this, reviews);
                 listView.setAdapter(adapter);
+                buttonAdd.setText("Add New Review");
+                currentView = 3;
                 showListView();
             }
-        });
+        }).addOnFailureListener(this::handleFailure);
     }
 
     private void loadRecords() {
@@ -97,9 +106,11 @@ public class AdminMainActivity extends AppCompatActivity {
                 List<RentalRecord> records = task.getResult();
                 RentalRecordAdapter adapter = new RentalRecordAdapter(this, records);
                 listView.setAdapter(adapter);
+                buttonAdd.setText("Add New Records");
+                currentView = 4;
                 showListView();
             }
-        });
+        }).addOnFailureListener(this::handleFailure);
     }
 
     private void showListView() {
@@ -110,10 +121,33 @@ public class AdminMainActivity extends AppCompatActivity {
     }
 
     private void showGridLayout() {
+        currentView = 0;
         gridLayout.setVisibility(View.VISIBLE);
         listView.setVisibility(View.GONE);
         buttonAdd.setVisibility(View.GONE);
         buttonBack.setVisibility(View.GONE);
+    }
+
+    private void addNewData(){
+        switch(currentView){
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            default:
+                break;
+        }
+    }
+    private void handleFailure(Exception exception) {
+        String message = exception != null ? exception.getMessage() : "Failed to load data";
+        Log.e("AdminMainActivity", message, exception);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     private void signOut() {

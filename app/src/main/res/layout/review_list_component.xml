@@ -27,27 +27,27 @@
         app:layout_constraintStart_toEndOf="@id/textViewReviewId"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Location ID -->
+    <!-- Location Name -->
     <TextView
-        android:id="@+id/textViewLocationId"
+        android:id="@+id/textViewLocationName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Location ID:"
+        android:text="Location:"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/textViewReviewId"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textViewLocationIdValue"
+        app:layout_constraintEnd_toStartOf="@id/textViewLocationNameValue"
         app:layout_constraintHorizontal_chainStyle="packed"
         android:layout_marginTop="8dp" />
 
     <TextView
-        android:id="@+id/textViewLocationIdValue"
+        android:id="@+id/textViewLocationNameValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/textViewReviewId"
-        app:layout_constraintStart_toEndOf="@id/textViewLocationId"
+        app:layout_constraintStart_toEndOf="@id/textViewLocationName"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
@@ -59,7 +59,7 @@
         android:text="Rating:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationId"
+        app:layout_constraintTop_toBottomOf="@id/textViewLocationName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/textViewRatingValue"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -70,33 +70,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationId"
+        app:layout_constraintTop_toBottomOf="@id/textViewLocationName"
         app:layout_constraintStart_toEndOf="@id/textViewRating"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
-    <!-- Comments -->
-    <TextView
-        android:id="@+id/textViewComments"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Comments:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewRating"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textViewCommentsValue"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        android:layout_marginTop="8dp" />
-
-    <TextView
-        android:id="@+id/textViewCommentsValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewRating"
-        app:layout_constraintStart_toEndOf="@id/textViewComments"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

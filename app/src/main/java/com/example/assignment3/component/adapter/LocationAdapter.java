@@ -10,7 +10,9 @@ import androidx.annotation.Nullable;
 import android.widget.ArrayAdapter;
 
 import com.example.assignment3.Entity.Location;
+import com.example.assignment3.Entity.User;
 import com.example.assignment3.R;
+import com.example.assignment3.component.FirebaseAction;
 
 import java.util.List;
 
@@ -34,17 +36,23 @@ public class LocationAdapter extends ArrayAdapter<Location> {
 
         Location location = locations.get(position);
 
+        TextView locationIdTextView = convertView.findViewById(R.id.textViewLocationIdValue);
         TextView locationAddressTextView = convertView.findViewById(R.id.textViewLocationAddressValue);
-        TextView locationCityTextView = convertView.findViewById(R.id.textViewLocationCityValue);
-        TextView locationCountryTextView = convertView.findViewById(R.id.textViewLocationCountryValue);
-        TextView locationDescriptionTextView = convertView.findViewById(R.id.textViewLocationDescriptionValue);
-        TextView locationPricesTextView = convertView.findViewById(R.id.textViewLocationPricesValue);
+        TextView locationPriceTextView = convertView.findViewById(R.id.textViewLocationPriceValue);
+        TextView hostNameTextView = convertView.findViewById(R.id.textViewHostNameValue);
 
+        locationIdTextView.setText(String.valueOf(location.getId()));
         locationAddressTextView.setText(location.getAddress());
-        locationCityTextView.setText(location.getCity());
-        locationCountryTextView.setText(location.getCountry());
-        locationDescriptionTextView.setText(location.getDescription());
-        locationPricesTextView.setText(String.valueOf(location.getPrices()));
+        locationPriceTextView.setText(String.valueOf(location.getPrices()));
+
+        FirebaseAction.findUserById(location.getHostId()).addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                User host = task.getResult();
+                hostNameTextView.setText(host.getName());
+            } else {
+                hostNameTextView.setText("Unknown Host");
+            }
+        });
 
         return convertView;
     }
