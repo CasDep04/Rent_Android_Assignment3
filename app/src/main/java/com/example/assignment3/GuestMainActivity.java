@@ -14,21 +14,38 @@ import android.widget.ViewAnimator;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.assignment3.Entity.MarkerData;
 import com.example.assignment3.component.FirebaseAction;
 import com.example.assignment3.component.Localdatabase.DatabaseManager;
 import com.example.assignment3.Entity.Guest;
 import com.example.assignment3.Entity.RentalRecord;
 import com.example.assignment3.Entity.User;
+import com.example.assignment3.component.adapter.CustomInfoWindowAdapter;
 import com.example.assignment3.component.adapter.RentalRecordAdapter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class GuestMainActivity extends AppCompatActivity {
 
@@ -93,12 +110,12 @@ public class GuestMainActivity extends AppCompatActivity {
         if (mapFragment != null) {
             mapFragment.getMapAsync(googleMap -> {
                 // Customize the map
-                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(this));
 
-                // Add a marker (optional)
-                LatLng sampleLocation = new LatLng(-34, 151);
-                googleMap.addMarker(new MarkerOptions().position(sampleLocation).title("Marker in Sydney"));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sampleLocation, 10));
+
+                // Fetch rental house locations from Firestore
+                fetchRentalHousesFromFirestore(googleMap);
             });
         } else {
             Log.e("GuestMainActivity", "Map fragment not found!");
@@ -113,6 +130,57 @@ public class GuestMainActivity extends AppCompatActivity {
         // Display current user information
         displayCurrentUserInformation();
     }
+
+
+    private void fetchRentalHousesFromFirestore(GoogleMap googleMap) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Access the rentals collection
+        db.collection("rentals")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        // Extract data from Firestore
+                        double latitude = document.getDouble("latitude");
+                        double longitude = document.getDouble("longitude");
+                        String name = document.getString("name");
+                        String address = document.getString("address");
+                        String propertyType = document.getString("propertyType");
+                        int pricePerNight = document.getLong("pricePerNight").intValue();
+                        List<String> facilities = (List<String>) document.get("facilities");
+                        String imageUrl = document.getString("imageUrl");
+
+                        // Create MarkerData
+                        MarkerData markerData = new MarkerData(
+                                name,
+                                "Type: " + propertyType + "\n" + address,
+                                imageUrl,
+                                pricePerNight
+                        );
+
+                        // Add marker to the map
+                        LatLng location = new LatLng(latitude, longitude);
+                        Marker marker = googleMap.addMarker(new MarkerOptions()
+                                .position(location)
+                                .title(name));
+                        marker.setTag(markerData); // Attach MarkerData to the marker
+                    }
+
+                    // Optionally move the camera to the first rental house
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        QueryDocumentSnapshot firstDocument = (QueryDocumentSnapshot) queryDocumentSnapshots.getDocuments().get(0);
+                        double firstLatitude = firstDocument.getDouble("latitude");
+                        double firstLongitude = firstDocument.getDouble("longitude");
+                        LatLng firstLocation = new LatLng(firstLatitude, firstLongitude);
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstLocation, 12));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error fetching rental houses", e);
+                    Toast.makeText(this, "Failed to load rental houses", Toast.LENGTH_SHORT).show();
+                });
+    }
+
 
 
     private void showView(int viewIndex) {
