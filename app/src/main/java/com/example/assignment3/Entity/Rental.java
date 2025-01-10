@@ -8,6 +8,7 @@ public class Rental {
     private String name;
     private String address;
     private double pricePerNight;
+    private String description;
     private String propertyType;
     private List<String> facilities;
     private String imageUrl;
@@ -18,11 +19,12 @@ public class Rental {
         // Default constructor required for calls to DataSnapshot.getValue(Rental.class)
     }
 
-    public Rental(String id, String name, String address, double pricePerNight, String propertyType, List<String> facilities, String imageUrl, double latitude, double longitude) {
+    public Rental(String id, String name, String address, double pricePerNight, String description, String propertyType, List<String> facilities, String imageUrl, double latitude, double longitude) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.pricePerNight = pricePerNight;
+        this.description = description;
         this.propertyType = propertyType;
         this.facilities = facilities;
         this.imageUrl = imageUrl;
@@ -30,7 +32,7 @@ public class Rental {
         this.longitude = longitude;
     }
 
-    // Getters and setters for all fields
+    // Getters and Setters for all fields
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -42,6 +44,9 @@ public class Rental {
 
     public double getPricePerNight() { return pricePerNight; }
     public void setPricePerNight(double pricePerNight) { this.pricePerNight = pricePerNight; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
     public String getPropertyType() { return propertyType; }
     public void setPropertyType(String propertyType) { this.propertyType = propertyType; }
