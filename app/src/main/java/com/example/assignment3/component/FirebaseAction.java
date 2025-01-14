@@ -147,7 +147,10 @@ public class FirebaseAction {
         }
         return db.collection("users").document(String.valueOf(userId)).delete();
     }
-
+    public static Task<Void> specialDeleteUserFromFirestore(int userId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        return db.collection("users").document(String.valueOf(userId)).delete();
+    }
     public static Task<User> findUserById(int userId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Log.d("FirebaseAction", "Finding user by ID: " + userId);
