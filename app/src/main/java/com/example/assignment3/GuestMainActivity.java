@@ -7,20 +7,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.assignment3.Entity.MarkerData;
+import com.example.assignment3.EntityDetails.RecordDetailsActivity;
 import com.example.assignment3.component.FirebaseAction;
 import com.example.assignment3.component.Localdatabase.DatabaseManager;
 import com.example.assignment3.Entity.Guest;
 import com.example.assignment3.Entity.RentalRecord;
 import com.example.assignment3.Entity.User;
 import com.example.assignment3.component.adapter.CustomInfoWindowAdapter;
+import com.example.assignment3.component.adapter.LocationMapAdapter;
 import com.example.assignment3.component.adapter.RentalRecordAdapter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,7 +44,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -103,23 +110,55 @@ public class GuestMainActivity extends AppCompatActivity {
         deleteAccountButton.setOnClickListener(v -> showDeleteAccountDialog());
 
 
+
         // view 2 for map layout
-        // Find the SupportMapFragment by its ID
+
+
+        RecyclerView locationList = findViewById(R.id.location_list);
+        ImageButton toggleButton = findViewById(R.id.toggle_list_button);
+
+        // Initialize RecyclerView (hidden by default)
+        locationList.setLayoutManager(new LinearLayoutManager(this));
+
+        // Toggle visibility of the list
+        toggleButton.setOnClickListener(v -> {
+            if (locationList.getVisibility() == View.GONE) {
+                locationList.setVisibility(View.VISIBLE); // Show the list
+            } else {
+                locationList.setVisibility(View.GONE); // Hide the list
+            }
+        });
+
+        // Initialize map
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        RecyclerView recyclerView = findViewById(R.id.location_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         if (mapFragment != null) {
             mapFragment.getMapAsync(googleMap -> {
-                // Customize the map
-//                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+                // Set the custom InfoWindowAdapter
                 googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(this));
 
+                // Move to RentalDetailActivity when click on the marker tag
+                googleMap.setOnInfoWindowClickListener(marker -> {
+                    MarkerData markerData = (MarkerData) marker.getTag();
+                    if (markerData != null) {
+                        // Navigate to RentalDetailActivity
+                        Intent detailIntent = new Intent(this, RentalDetailActivity.class);
+                        detailIntent.putExtra("markerData", markerData);
+                        startActivity(detailIntent);
+                    }
+                });
 
-                // Fetch rental house locations from Firestore
-                fetchRentalHousesFromFirestore(googleMap);
+                // Fetch rental houses and bind data to RecyclerView
+                fetchRentalHousesFromFirestore(googleMap, recyclerView);
             });
         } else {
             Log.e("GuestMainActivity", "Map fragment not found!");
         }
+
 
 
 
@@ -132,10 +171,11 @@ public class GuestMainActivity extends AppCompatActivity {
     }
 
 
-    private void fetchRentalHousesFromFirestore(GoogleMap googleMap) {
+    private void fetchRentalHousesFromFirestore(GoogleMap googleMap, RecyclerView recyclerView) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        List<MarkerData> locationList = new ArrayList<>();
+        Map<String, Marker> markerMap = new HashMap<>();
 
-        // Access the rentals collection
         db.collection("rentals")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -145,17 +185,21 @@ public class GuestMainActivity extends AppCompatActivity {
                         double longitude = document.getDouble("longitude");
                         String name = document.getString("name");
                         String address = document.getString("address");
+                        String description = document.getString("description");
                         String propertyType = document.getString("propertyType");
                         int pricePerNight = document.getLong("pricePerNight").intValue();
-                        List<String> facilities = (List<String>) document.get("facilities");
                         String imageUrl = document.getString("imageUrl");
+                        List<String> facilities = (List<String>) document.get("facilities");
 
-                        // Create MarkerData
+                        // Create MarkerData object
                         MarkerData markerData = new MarkerData(
                                 name,
-                                "Type: " + propertyType + "\n" + address,
-                                imageUrl,
-                                pricePerNight
+                                address, // Pass only the address here
+                                description, // Add description from Firestore
+                                imageUrl, // Image URL from Firestore
+                                propertyType, // Property type from Firestore
+                                pricePerNight, // Price per night
+                                facilities // List of facilities from Firestore
                         );
 
                         // Add marker to the map
@@ -164,7 +208,24 @@ public class GuestMainActivity extends AppCompatActivity {
                                 .position(location)
                                 .title(name));
                         marker.setTag(markerData); // Attach MarkerData to the marker
+
+                        // Add marker data to the list for the RecyclerView
+                        locationList.add(markerData);
+
+                        // Map the location name to the marker for quick access
+                        markerMap.put(name, marker);
                     }
+
+                    // Set RecyclerView Adapter
+                    LocationMapAdapter adapter = new LocationMapAdapter(locationList, location -> {
+                        // On click: Move the camera to the marker and show info window
+                        Marker marker = markerMap.get(location.getName());
+                        if (marker != null) {
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
+                            marker.showInfoWindow();
+                        }
+                    });
+                    recyclerView.setAdapter(adapter);
 
                     // Optionally move the camera to the first rental house
                     if (!queryDocumentSnapshots.isEmpty()) {
@@ -176,10 +237,14 @@ public class GuestMainActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Error fetching rental houses", e);
+                    Log.e("Firestore", "Error fetching rentals", e);
                     Toast.makeText(this, "Failed to load rental houses", Toast.LENGTH_SHORT).show();
                 });
     }
+
+
+
+
 
 
 
