@@ -15,15 +15,16 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+import android.util.Log;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.assignment3.R;
 import com.example.assignment3.Entity.Rental;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -33,14 +34,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class CreateRentalActivity extends AppCompatActivity {
+public class UpdateRentalActivity extends AppCompatActivity {
 
     private EditText homestayName, homestayAddress, homestayPrice, homestayDescription;
     private RadioGroup propertyTypeGroup;
     private CheckBox facilityWifi, facilityAirportShuttle, facilityLaundry, facilityKitchen;
     private ImageView selectedImage;
     private Uri imageUri;
+    private String rentalId;
     private double latitude, longitude;
+    private String oldImageUrl;
 
     private FirebaseFirestore db;
     private StorageReference storageReference;
@@ -48,13 +51,12 @@ public class CreateRentalActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_rental);
+        setContentView(R.layout.activity_update_rental);
 
         homestayName = findViewById(R.id.homestay_name);
         homestayAddress = findViewById(R.id.homestay_address);
         homestayPrice = findViewById(R.id.homestay_price);
         homestayDescription = findViewById(R.id.homestay_description);
-        homestayAddress = findViewById(R.id.homestay_address);
         propertyTypeGroup = findViewById(R.id.property_type_group);
         facilityWifi = findViewById(R.id.facility_wifi);
         facilityAirportShuttle = findViewById(R.id.facility_airport_shuttle);
@@ -62,15 +64,56 @@ public class CreateRentalActivity extends AppCompatActivity {
         facilityKitchen = findViewById(R.id.facility_kitchen);
         selectedImage = findViewById(R.id.selected_image);
         Button selectImageButton = findViewById(R.id.select_image_button);
-        Button publishButton = findViewById(R.id.publish_button);
+        Button saveButton = findViewById(R.id.save_button);
         ImageButton mapIcon = findViewById(R.id.map_icon);
 
         db = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("rental_images");
 
+        rentalId = getIntent().getStringExtra("RENTAL_ID");
+        if (rentalId != null) {
+            loadRentalDetails(rentalId);
+        } else {
+            Toast.makeText(this, "Rental ID not found", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
         selectImageButton.setOnClickListener(v -> selectImage());
         mapIcon.setOnClickListener(v -> openMapsActivity());
-        publishButton.setOnClickListener(v -> publishRental());
+        saveButton.setOnClickListener(v -> saveRental());
+    }
+
+    private void loadRentalDetails(String rentalId) {
+        db.collection("rentals").document(rentalId).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Rental rental = documentSnapshot.toObject(Rental.class);
+                if (rental != null) {
+                    homestayName.setText(rental.getName());
+                    homestayAddress.setText(rental.getAddress());
+                    homestayPrice.setText(String.valueOf(rental.getPricePerNight()));
+                    homestayDescription.setText(rental.getDescription());
+                    latitude = rental.getLatitude();
+                    longitude = rental.getLongitude();
+                    oldImageUrl = rental.getImageUrl();
+                    // Set property type
+                    for (int i = 0; i < propertyTypeGroup.getChildCount(); i++) {
+                        RadioButton radioButton = (RadioButton) propertyTypeGroup.getChildAt(i);
+                        if (radioButton.getText().toString().equals(rental.getPropertyType())) {
+                            radioButton.setChecked(true);
+                            break;
+                        }
+                    }
+                    // Set facilities
+                    facilityWifi.setChecked(rental.getFacilities().contains("Free Wifi"));
+                    facilityAirportShuttle.setChecked(rental.getFacilities().contains("Airport Shuttle"));
+                    facilityLaundry.setChecked(rental.getFacilities().contains("Laundry Services"));
+                    facilityKitchen.setChecked(rental.getFacilities().contains("Shared Kitchen"));
+                    // Load image
+                    Glide.with(this).load(oldImageUrl).into(selectedImage);
+                    selectedImage.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     private void selectImage() {
@@ -110,7 +153,7 @@ public class CreateRentalActivity extends AppCompatActivity {
         startActivityForResult(intent, 2);
     }
 
-    private void publishRental() {
+    private void saveRental() {
         String name = homestayName.getText().toString().trim();
         String address = homestayAddress.getText().toString().trim();
         double price = Double.parseDouble(homestayPrice.getText().toString().trim());
@@ -127,25 +170,54 @@ public class CreateRentalActivity extends AppCompatActivity {
             fileReference.putFile(imageUri)
                     .addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
                         String imageUrl = uri.toString();
-                        Rental rental = new Rental(null, name, address, price, description, propertyType, facilities, imageUrl, latitude, longitude);
-                        db.collection("rentals").add(rental).addOnSuccessListener(documentReference -> {
-                            rental.setId(documentReference.getId());
-                            db.collection("rentals").document(documentReference.getId()).set(rental).addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(CreateRentalActivity.this, "Rental published successfully", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                } else {
-                                    Toast.makeText(CreateRentalActivity.this, "Failed to publish rental", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }).addOnFailureListener(e -> {
-                            Toast.makeText(CreateRentalActivity.this, "Error adding rental to Firestore", Toast.LENGTH_SHORT).show();
-                        });
+                        updateRental(name, address, price, description, propertyType, facilities, imageUrl);
+                        deleteOldImage();
                     })).addOnFailureListener(e -> {
-                        Toast.makeText(CreateRentalActivity.this, "Error uploading image to Firebase Storage", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateRentalActivity.this, "Error uploading image to Firebase Storage", Toast.LENGTH_SHORT).show();
                     });
         } else {
-            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
+            updateRental(name, address, price, description, propertyType, facilities, null);
+        }
+    }
+
+    private void updateRental(String name, String address, double price, String description, String propertyType, List<String> facilities, @Nullable String imageUrl) {
+        DocumentReference rentalRef = db.collection("rentals").document(rentalId);
+        rentalRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                String currentImageUrl = task.getResult().getString("imageUrl");
+                rentalRef.update("name", name,
+                                "address", address,
+                                "pricePerNight", price,
+                                "description", description,
+                                "propertyType", propertyType,
+                                "facilities", facilities,
+                                "latitude", latitude,
+                                "longitude", longitude,
+                                "imageUrl", imageUrl != null ? imageUrl : currentImageUrl)
+                        .addOnCompleteListener(updateTask -> {
+                            if (updateTask.isSuccessful()) {
+                                Toast.makeText(UpdateRentalActivity.this, "Rental updated successfully", Toast.LENGTH_SHORT).show();
+                                Intent resultIntent = new Intent();
+                                setResult(RESULT_OK, resultIntent);
+                                finish();
+                            } else {
+                                Toast.makeText(UpdateRentalActivity.this, "Failed to update rental", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            } else {
+                Toast.makeText(UpdateRentalActivity.this, "Failed to get current rental data", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void deleteOldImage() {
+        if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
+            StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(oldImageUrl);
+            oldImageRef.delete().addOnSuccessListener(aVoid -> {
+                // Old image deleted successfully
+            }).addOnFailureListener(e -> {
+                Toast.makeText(UpdateRentalActivity.this, "Failed to delete old image", Toast.LENGTH_SHORT).show();
+            });
         }
     }
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateRentalActivity">
+    tools:context=".UpdateRentalActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Homestay Renting"
+            android:text="Update Homestay Renting"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_gravity="center"/>
@@ -142,9 +142,9 @@
             android:visibility="gone"/>
 
         <Button
-            android:id="@+id/publish_button"
+            android:id="@+id/save_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Publish"/>
+            android:text="Save"/>
     </LinearLayout>
 </ScrollView>
