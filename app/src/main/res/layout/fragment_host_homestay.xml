@@ -5,10 +5,37 @@
     android:layout_height="match_parent"
     tools:context=".fragments.HostHomestay">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- LinearLayout to arrange SearchView and Spinner horizontally -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_alignParentTop="true">
+
+        <!-- SearchView for searching rentals -->
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:queryHint="Search Rentals"
+            android:iconifiedByDefault="false" />
+
+        <!-- Spinner for filtering (e.g., by category or price range) -->
+        <Spinner
+            android:id="@+id/filter_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="47dp"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+    <!-- RecyclerView to display rental listings -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rental_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp" /> <!-- Adjust to avoid overlap with SearchView and Spinner -->
 
 </FrameLayout>

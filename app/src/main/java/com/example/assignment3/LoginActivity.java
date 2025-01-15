@@ -40,9 +40,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Force user to log out every time
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            mAuth.signOut();  // Force sign out if a user is already signed in
+        }
+
         LocalDB = new DatabaseManager(this);
         LocalDB.open();
-        mAuth = FirebaseAuth.getInstance();
 
         emailEditText = findViewById(R.id.email);
         passwordEditText = findViewById(R.id.password);
@@ -59,14 +65,6 @@ public class LoginActivity extends AppCompatActivity {
                 R.array.roles_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         roleSpinner.setAdapter(adapter);
-        try (Cursor cursor = LocalDB.selectAllUsers()) {
-            if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                goToMainActivity(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.USER_EMAIL)));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         loginButton = findViewById(R.id.loginButton);
         toRegisterViewButton = findViewById(R.id.toRegisterViewButton);
@@ -92,10 +90,13 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        Toast.makeText(LoginActivity.this, "Authentication Successful.", Toast.LENGTH_SHORT).show();
-                        LocalDB.updateUser(email);
-                        goToMainActivity(email);
+                        if (user != null) {
+                            // User signed in successfully, proceed with the logic
+                            LocalDB.updateUser(email);
+                            goToMainActivity(email);
+                        }
                     } else {
+                        // Handle failed authentication
                         Toast.makeText(LoginActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -145,16 +146,15 @@ public class LoginActivity extends AppCompatActivity {
                         mAuth.signInWithEmailAndPassword(email, password)
                                 .addOnCompleteListener(this, signInTask -> {
                                     if (signInTask.isSuccessful()) {
-                                        // Sign-in successful
+                                        // After sign-in, navigate to the Registration Info activity
                                         FirebaseUser user = signInTask.getResult().getUser();
-
                                         Intent i1 = new Intent(LoginActivity.this, RegistrationInfoActivity.class);
                                         i1.putExtra("email", email);
                                         i1.putExtra("role", role);
                                         startActivity(i1);
                                         finish();
                                     } else {
-                                        // Sign-in failed - handle errors
+                                        // Handle sign-in failure
                                         String errorMessage = signInTask.getException() != null ? signInTask.getException().getMessage() : "Sign-in failed.";
                                         Toast.makeText(LoginActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
                                     }
@@ -206,3 +206,5 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 }
+
+

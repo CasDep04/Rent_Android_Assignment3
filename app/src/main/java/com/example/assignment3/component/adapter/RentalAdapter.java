@@ -111,4 +111,9 @@ public class RentalAdapter extends RecyclerView.Adapter<RentalAdapter.RentalView
             deleteButton = itemView.findViewById(R.id.delete_button);
         }
     }
+    public void setFilteredList(List<Rental> filteredList) {
+        rentalList.clear();  // Clear the existing list
+        rentalList.addAll(filteredList);  // Add filtered items
+        notifyDataSetChanged();
+    }
 }

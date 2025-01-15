@@ -5,12 +5,18 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 import com.example.assignment3.R;
 import com.example.assignment3.component.adapter.RentalAdapter;
@@ -23,21 +29,13 @@ import java.util.List;
 
 public class HostHomestay extends Fragment {
 
-    private static final int UPDATE_RENTAL_REQUEST_CODE = 1;
     private RecyclerView recyclerView;
     private RentalAdapter rentalAdapter;
     private List<Rental> rentalList;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == UPDATE_RENTAL_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Handle the result, e.g., refresh the list of rentals
-            refreshRentals();
-        }
-    }
+    private SearchView searchView;
+    private Spinner spinner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,12 +58,79 @@ public class HostHomestay extends Fragment {
         rentalAdapter = new RentalAdapter(getContext(), rentalList);
         recyclerView.setAdapter(rentalAdapter);
 
-        // Fetch data from Firestore
+        // Initialize SearchView and handle text changes
+        searchView = view.findViewById(R.id.search_view);
+        searchView.clearFocus();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterList(newText);  // Apply both search and spinner filters when text changes
+                return false;
+            }
+        });
+
+        // Initialize Spinner and set up the adapter
+        spinner = view.findViewById(R.id.filter_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.property_types, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        // Spinner item selection listener
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                filterList(searchView.getQuery().toString());  // Apply both search and spinner filters when the spinner changes
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // No action needed
+            }
+        });
+
+        // Fetch data from Firestore initially
         fetchRentalsFromFirestore();
 
         return view;
     }
 
+    // Method to filter the list based on search query and selected spinner type
+    private void filterList(String newText) {
+        List<Rental> filteredList = new ArrayList<>();
+        String selectedType = (String) spinner.getSelectedItem();  // Get selected property type from the spinner
+
+        // Check if we should fetch everything
+        if (newText.isEmpty() && selectedType.equals("All")) {
+            fetchRentalsFromFirestore();
+            return;
+        }
+
+        // Apply filter based on search text and spinner type
+        for (Rental rental : rentalList) {
+            boolean matchesSearch = newText.isEmpty() || rental.getName().toLowerCase().contains(newText.toLowerCase());
+            boolean matchesType = selectedType.equals("All") || rental.getPropertyType().equalsIgnoreCase(selectedType);
+
+            if (matchesSearch && matchesType) {
+                filteredList.add(rental);
+            }
+        }
+
+        // If no rentals match the filters, show a toast
+        if (filteredList.isEmpty()) {
+            Toast.makeText(getContext(), "No rentals found", Toast.LENGTH_SHORT).show();
+        }
+
+        // Update the adapter with the new filtered list
+        rentalAdapter.setFilteredList(filteredList);
+    }
+
+    // Method to fetch rentals from Firestore
     private void fetchRentalsFromFirestore() {
         String hostId = auth.getCurrentUser().getUid();
         db.collection("rentals")
@@ -79,14 +144,13 @@ public class HostHomestay extends Fragment {
                             rental.setId(document.getId());
                             rentalList.add(rental);
                         }
-                        rentalAdapter.notifyDataSetChanged();
+                        // Apply filtering after data fetch
+                        filterList(searchView.getQuery().toString());  // Ensure that the list is filtered according to the search
+                        rentalAdapter.notifyDataSetChanged();  // Notify adapter to refresh the UI
                     } else {
                         Toast.makeText(getContext(), "Error getting rentals.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
-
-    private void refreshRentals() {
-        fetchRentalsFromFirestore();
-    }
 }
+
