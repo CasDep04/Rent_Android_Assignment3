@@ -4,7 +4,6 @@ import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 import com.example.assignment3.R;
 import com.example.assignment3.component.adapter.RentalAdapter;
 import com.example.assignment3.Entity.Rental;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ public class HostHomestay extends Fragment {
     private RentalAdapter rentalAdapter;
     private List<Rental> rentalList;
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -48,8 +49,9 @@ public class HostHomestay extends Fragment {
         recyclerView = view.findViewById(R.id.rental_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Initialize Firestore
+        // Initialize Firestore and Auth
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         // Initialize rental list
         rentalList = new ArrayList<>();
@@ -65,19 +67,23 @@ public class HostHomestay extends Fragment {
     }
 
     private void fetchRentalsFromFirestore() {
-        db.collection("rentals").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                rentalList.clear();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    Rental rental = document.toObject(Rental.class);
-                    rental.setId(document.getId());
-                    rentalList.add(rental);
-                }
-                rentalAdapter.notifyDataSetChanged();
-            } else {
-                Toast.makeText(getContext(), "Error getting rentals.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        String hostId = auth.getCurrentUser().getUid();
+        db.collection("rentals")
+                .whereEqualTo("hostId", hostId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        rentalList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Rental rental = document.toObject(Rental.class);
+                            rental.setId(document.getId());
+                            rentalList.add(rental);
+                        }
+                        rentalAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(getContext(), "Error getting rentals.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void refreshRentals() {

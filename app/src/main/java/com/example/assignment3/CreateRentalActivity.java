@@ -5,7 +5,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -16,14 +15,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.assignment3.R;
 import com.example.assignment3.Entity.Rental;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -44,6 +42,7 @@ public class CreateRentalActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private StorageReference storageReference;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +53,6 @@ public class CreateRentalActivity extends AppCompatActivity {
         homestayAddress = findViewById(R.id.homestay_address);
         homestayPrice = findViewById(R.id.homestay_price);
         homestayDescription = findViewById(R.id.homestay_description);
-        homestayAddress = findViewById(R.id.homestay_address);
         propertyTypeGroup = findViewById(R.id.property_type_group);
         facilityWifi = findViewById(R.id.facility_wifi);
         facilityAirportShuttle = findViewById(R.id.facility_airport_shuttle);
@@ -67,6 +65,7 @@ public class CreateRentalActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("rental_images");
+        auth = FirebaseAuth.getInstance();
 
         selectImageButton.setOnClickListener(v -> selectImage());
         mapIcon.setOnClickListener(v -> openMapsActivity());
@@ -122,12 +121,14 @@ public class CreateRentalActivity extends AppCompatActivity {
         if (facilityLaundry.isChecked()) facilities.add("Laundry Services");
         if (facilityKitchen.isChecked()) facilities.add("Shared Kitchen");
 
+        String hostId = auth.getCurrentUser().getUid();
+
         if (imageUri != null) {
             StorageReference fileReference = storageReference.child(System.currentTimeMillis() + ".jpg");
             fileReference.putFile(imageUri)
                     .addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
                         String imageUrl = uri.toString();
-                        Rental rental = new Rental(null, name, address, price, description, propertyType, facilities, imageUrl, latitude, longitude);
+                        Rental rental = new Rental(null, hostId, name, address, price, description, propertyType, facilities, imageUrl, latitude, longitude);
                         db.collection("rentals").add(rental).addOnSuccessListener(documentReference -> {
                             rental.setId(documentReference.getId());
                             db.collection("rentals").document(documentReference.getId()).set(rental).addOnCompleteListener(task -> {
