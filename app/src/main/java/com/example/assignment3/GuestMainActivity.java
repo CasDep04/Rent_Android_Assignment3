@@ -3,6 +3,7 @@ package com.example.assignment3;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,9 +13,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.assignment3.Entity.Host;
 import com.example.assignment3.EntityDetails.RecordDetailsActivity;
 import com.example.assignment3.component.FirebaseAction;
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -56,17 +58,32 @@ public class GuestMainActivity extends AppCompatActivity {
         db = new DatabaseManager(this);
         db.open();
 
-        Button buttonView1 = findViewById(R.id.button1);
-        Button buttonView2 = findViewById(R.id.button2);
-        Button buttonView3 = findViewById(R.id.button3);
         viewAnimator = findViewById(R.id.viewAnimator);
 
-        buttonView1.setOnClickListener(v -> showView(0));
-        buttonView2.setOnClickListener(v -> showView(1));
-        buttonView3.setOnClickListener(v -> showView(2));
+        // Setup ViewAnimatorHandler
+        // Set up the BottomNavigationView
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_view);
+        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+                if (itemId == R.id.nav_profile) {
+                    showView(0);
+                } else if (itemId == R.id.nav_map) {
+                    showView(1);
+                } else if (itemId == R.id.nav_status) {
+                    showView(2);
+                }
+                return true;
+            }
+        });
 
         // Set default view
         showView(0);
+
+        // Set up the Delete Account button
+        Button deleteAccountButton = findViewById(R.id.delete_account_button);
+        deleteAccountButton.setOnClickListener(v -> showDeleteAccountDialog());
 
         // Setup profile view
         View profileView = viewAnimator.getChildAt(0);
@@ -89,11 +106,6 @@ public class GuestMainActivity extends AppCompatActivity {
         });
         logout_button.setOnClickListener(v -> logOut());
 
-        // Set up the Delete Account button
-        Button deleteAccountButton = findViewById(R.id.delete_account_button);
-        deleteAccountButton.setOnClickListener(v -> showDeleteAccountDialog());
-
-
         // view 2 for map layout
         // Find the SupportMapFragment by its ID
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -111,9 +123,6 @@ public class GuestMainActivity extends AppCompatActivity {
         } else {
             Log.e("GuestMainActivity", "Map fragment not found!");
         }
-
-
-
 
         //View 3
         recordListView = view3.findViewById(R.id.recordListView);
