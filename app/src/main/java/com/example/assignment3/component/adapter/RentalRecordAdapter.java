@@ -61,23 +61,23 @@ public class RentalRecordAdapter extends ArrayAdapter<RentalRecord> {
                 break;
         }
 
-        FirebaseAction.findUserById(record.getGuestId()).addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                User guest = task.getResult();
-                guestNameTextView.setText(guest.getName());
-            } else {
-                guestNameTextView.setText("Unknown Guest");
-            }
-        });
-
-        FirebaseAction.findUserById(record.getHostId()).addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                User host = task.getResult();
-                hostNameTextView.setText(host.getName());
-            } else {
-                hostNameTextView.setText("Unknown Host");
-            }
-        });
+//        FirebaseAction.findUserById(record.getGuestId()).addOnCompleteListener(task -> {
+//            if (task.isSuccessful() && task.getResult() != null) {
+//                User guest = task.getResult();
+//                guestNameTextView.setText(guest.getName());
+//            } else {
+//                guestNameTextView.setText("Unknown Guest");
+//            }
+//        });
+//
+//        FirebaseAction.findUserById(record.getHostId()).addOnCompleteListener(task -> {
+//            if (task.isSuccessful() && task.getResult() != null) {
+//                User host = task.getResult();
+//                hostNameTextView.setText(host.getName());
+//            } else {
+//                hostNameTextView.setText("Unknown Host");
+//            }
+//        });
 
         return convertView;
     }

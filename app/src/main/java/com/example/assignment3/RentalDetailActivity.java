@@ -47,7 +47,7 @@ public class RentalDetailActivity extends AppCompatActivity {
             return;
         }
 
-        int currentUserId = currentUser.getUid().hashCode(); // Convert UID to int.
+        String currentUserId = currentUser.getUid(); // Convert UID to int.
 
 
 
@@ -113,14 +113,16 @@ public class RentalDetailActivity extends AppCompatActivity {
                 long numberOfNights = calculateNights(startDate, endDate);
                 double totalPrice = numberOfNights * markerData.getPricePerNight();
 
-
+                // Get hostId and locationId from MarkerData
+                String hostId = markerData.getHostId();
+                String locationId = markerData.getLocationId();
 
                 // Create a rental record
                 RentalRecord rentalRecord = new RentalRecord(
-                        0, // auto-generated ID
+                        null, // auto-generated ID
                         currentUserId, // guestId
-                        2, // hostId
-                        1, // locationId
+                        hostId, // hostId from rentals document
+                        locationId, // id from rentals document
                         startDate,
                         endDate,
                         totalPrice,
@@ -162,14 +164,26 @@ public class RentalDetailActivity extends AppCompatActivity {
         db.collection("rentalRecords")
                 .add(rentalRecord)
                 .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Request sent successfully!", Toast.LENGTH_SHORT).show();
-                    finish(); // Close the activity
+                    // Get the auto-generated ID
+                    String generatedId = documentReference.getId();
+
+                    // Update the rental record with the generated ID
+                    documentReference.update("id", generatedId)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(this, "Request sent successfully!", Toast.LENGTH_SHORT).show();
+                                finish(); // Close the activity
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, "Failed to update ID", Toast.LENGTH_SHORT).show();
+                                e.printStackTrace();
+                            });
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Failed to send request", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 });
     }
+
 }
 
 

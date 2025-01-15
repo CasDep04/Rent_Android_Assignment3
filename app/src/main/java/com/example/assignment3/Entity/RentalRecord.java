@@ -1,20 +1,20 @@
 package com.example.assignment3.Entity;
 
 public class RentalRecord {
-    private int id;
-    private int guestId;
-    private int hostId;
-    private int locationId;
+    private String id;
+    private String guestId;
+    private String hostId;
+    private String locationId;
     private String startDate;
     private String endDate;
     private double totalPrice;
-    private String status;  //(pending, accepted, rejected)
+    private String status;  // (pending, accepted, rejected)
 
-    public RentalRecord(){
-
+    public RentalRecord() {
     }
+
     // Constructor with the new status parameter
-    public RentalRecord(int id, int guestId, int hostId, int locationId, String startDate, String endDate, double price, String status) {
+    public RentalRecord(String id, String guestId, String hostId, String locationId, String startDate, String endDate, double price, String status) {
         this.id = id;
         this.guestId = guestId;
         this.hostId = hostId;
@@ -26,35 +26,35 @@ public class RentalRecord {
     }
 
     // Getters and Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public int getGuestId() {
+    public String getGuestId() {  // Corrected to return String
         return guestId;
     }
 
-    public void setGuestId(int guestId) {
+    public void setGuestId(String guestId) {  // Corrected to accept String
         this.guestId = guestId;
     }
 
-    public int getHostId() {
+    public String getHostId() {  // Corrected to return String
         return hostId;
     }
 
-    public void setHostId(int hostId) {
+    public void setHostId(String hostId) {  // Corrected to accept String
         this.hostId = hostId;
     }
 
-    public int getLocationId() {
+    public String getLocationId() {  // Corrected to return String
         return locationId;
     }
 
-    public void setLocationId(int locationId) {
+    public void setLocationId(String locationId) {  // Corrected to accept String
         this.locationId = locationId;
     }
 

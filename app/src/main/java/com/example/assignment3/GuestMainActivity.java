@@ -190,16 +190,21 @@ public class GuestMainActivity extends AppCompatActivity {
                         int pricePerNight = document.getLong("pricePerNight").intValue();
                         String imageUrl = document.getString("imageUrl");
                         List<String> facilities = (List<String>) document.get("facilities");
+                        String hostId = document.getString("hostId");
+                        String locationId = document.getString("id");
+
 
                         // Create MarkerData object
                         MarkerData markerData = new MarkerData(
                                 name,
-                                address, // Pass only the address here
-                                description, // Add description from Firestore
-                                imageUrl, // Image URL from Firestore
-                                propertyType, // Property type from Firestore
-                                pricePerNight, // Price per night
-                                facilities // List of facilities from Firestore
+                                address,
+                                description,
+                                imageUrl,
+                                propertyType,
+                                pricePerNight,
+                                facilities,
+                                hostId,
+                                locationId
                         );
 
                         // Add marker to the map
