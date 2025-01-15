@@ -7,6 +7,7 @@ public class Review {
     private String comments;
 
     // Constructor
+    public Review(){}
     public Review(int id, int locationId, int rating, String comments) {
         this.id = id;
         this.locationId = locationId;

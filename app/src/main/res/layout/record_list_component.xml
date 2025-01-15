@@ -5,51 +5,73 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <!-- Guest ID -->
+    <!-- Record ID -->
     <TextView
-        android:id="@+id/textViewGuestId"
+        android:id="@+id/textViewRecordId"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Guest ID:"
+        android:text="Record ID:"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textViewGuestIdValue"
+        app:layout_constraintEnd_toStartOf="@id/textViewRecordIdValue"
         app:layout_constraintHorizontal_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/textViewGuestIdValue"
+        android:id="@+id/textViewRecordIdValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="123"
         android:textSize="18sp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/textViewGuestId"
+        app:layout_constraintStart_toEndOf="@id/textViewRecordId"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Start Date -->
+    <!-- Guest Name -->
     <TextView
-        android:id="@+id/textViewStartDate"
+        android:id="@+id/textViewGuestName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Start Date:"
+        android:text="Guest:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewGuestId"
+        app:layout_constraintTop_toBottomOf="@id/textViewRecordId"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textViewStartDateValue"
+        app:layout_constraintEnd_toStartOf="@id/textViewGuestNameValue"
         app:layout_constraintHorizontal_chainStyle="packed"
         android:layout_marginTop="8dp" />
 
     <TextView
-        android:id="@+id/textViewStartDateValue"
+        android:id="@+id/textViewGuestNameValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="2023-01-01"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewGuestId"
-        app:layout_constraintStart_toEndOf="@id/textViewStartDate"
+        app:layout_constraintTop_toBottomOf="@id/textViewRecordId"
+        app:layout_constraintStart_toEndOf="@id/textViewGuestName"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Host Name -->
+    <TextView
+        android:id="@+id/textViewHostName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Host:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/textViewGuestName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textViewHostNameValue"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/textViewHostNameValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/textViewGuestName"
+        app:layout_constraintStart_toEndOf="@id/textViewHostName"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
@@ -61,7 +83,7 @@
         android:text="Status:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewStartDate"
+        app:layout_constraintTop_toBottomOf="@id/textViewHostName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/textViewStatusValue"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -71,9 +93,8 @@
         android:id="@+id/textViewStatusValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Completed"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewStartDate"
+        app:layout_constraintTop_toBottomOf="@id/textViewHostName"
         app:layout_constraintStart_toEndOf="@id/textViewStatus"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />

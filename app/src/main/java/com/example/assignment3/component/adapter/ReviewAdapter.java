@@ -9,8 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.widget.ArrayAdapter;
 
+import com.example.assignment3.Entity.Location;
 import com.example.assignment3.Entity.Review;
 import com.example.assignment3.R;
+import com.example.assignment3.component.FirebaseAction;
 
 import java.util.List;
 
@@ -35,14 +37,20 @@ public class ReviewAdapter extends ArrayAdapter<Review> {
         Review review = reviews.get(position);
 
         TextView reviewIdTextView = convertView.findViewById(R.id.textViewReviewIdValue);
-        TextView locationIdTextView = convertView.findViewById(R.id.textViewLocationIdValue);
+        TextView locationNameTextView = convertView.findViewById(R.id.textViewLocationNameValue);
         TextView ratingTextView = convertView.findViewById(R.id.textViewRatingValue);
-        TextView commentsTextView = convertView.findViewById(R.id.textViewCommentsValue);
 
         reviewIdTextView.setText(String.valueOf(review.getId()));
-        locationIdTextView.setText(String.valueOf(review.getLocationId()));
         ratingTextView.setText(String.valueOf(review.getRating()));
-        commentsTextView.setText(review.getComments());
+
+        FirebaseAction.findLocationById(review.getLocationId()).addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                Location location = task.getResult();
+                locationNameTextView.setText(location.getAddress());
+            } else {
+                locationNameTextView.setText("Unknown Location");
+            }
+        });
 
         return convertView;
     }

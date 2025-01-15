@@ -2,16 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".EntityDetails.RecordDetailsActivity">
+    tools:context=".EntityDetails.ReviewDetailActivity">
 
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rental Record Details"
+        android:text="Review Details"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,10 +21,10 @@
         android:layout_marginTop="16dp" />
 
     <TextView
-        android:id="@+id/textViewGuestName"
+        android:id="@+id/textViewReviewId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Guest Name:"
+        android:text="Review ID:"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
@@ -32,34 +33,12 @@
         android:layout_marginStart="16dp" />
 
     <TextView
-        android:id="@+id/textViewGuestNameValue"
+        android:id="@+id/textViewReviewIdValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
-        app:layout_constraintStart_toEndOf="@id/textViewGuestName"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp" />
-
-    <TextView
-        android:id="@+id/textViewHostName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Host Name:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewGuestName"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp" />
-
-    <TextView
-        android:id="@+id/textViewHostNameValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewGuestName"
-        app:layout_constraintStart_toEndOf="@id/textViewHostName"
+        app:layout_constraintStart_toEndOf="@id/textViewReviewId"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp" />
 
@@ -70,7 +49,7 @@
         android:text="Location:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewHostName"
+        app:layout_constraintTop_toBottomOf="@id/textViewReviewId"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp" />
@@ -80,16 +59,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewHostName"
+        app:layout_constraintTop_toBottomOf="@id/textViewReviewId"
         app:layout_constraintStart_toEndOf="@id/textViewLocationName"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp" />
 
     <TextView
-        android:id="@+id/textViewStartDate"
+        android:id="@+id/textViewRating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Date:"
+        android:text="Rating:"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/textViewLocationName"
@@ -98,78 +77,34 @@
         android:layout_marginStart="16dp" />
 
     <TextView
-        android:id="@+id/textViewStartDateValue"
+        android:id="@+id/textViewRatingValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/textViewLocationName"
-        app:layout_constraintStart_toEndOf="@id/textViewStartDate"
+        app:layout_constraintStart_toEndOf="@id/textViewRating"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp" />
 
     <TextView
-        android:id="@+id/textViewEndDate"
+        android:id="@+id/textViewComments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="End Date:"
+        android:text="Comments:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewStartDate"
+        app:layout_constraintTop_toBottomOf="@id/textViewRating"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp" />
 
     <TextView
-        android:id="@+id/textViewEndDateValue"
+        android:id="@+id/textViewCommentsValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewStartDate"
-        app:layout_constraintStart_toEndOf="@id/textViewEndDate"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp" />
-
-    <TextView
-        android:id="@+id/textViewTotalPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Total Price:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewEndDate"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp" />
-
-    <TextView
-        android:id="@+id/textViewTotalPriceValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewEndDate"
-        app:layout_constraintStart_toEndOf="@id/textViewTotalPrice"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp" />
-
-    <TextView
-        android:id="@+id/textViewStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Status:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewTotalPrice"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp" />
-
-    <TextView
-        android:id="@+id/textViewStatusValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewTotalPrice"
-        app:layout_constraintStart_toEndOf="@id/textViewStatus"
+        app:layout_constraintTop_toBottomOf="@id/textViewRating"
+        app:layout_constraintStart_toEndOf="@id/textViewComments"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp" />
 
@@ -178,7 +113,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Go Back"
-        app:layout_constraintTop_toBottomOf="@id/textViewStatusValue"
+        app:layout_constraintTop_toBottomOf="@id/textViewCommentsValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />

@@ -1,4 +1,4 @@
-package com.example.assignment3;
+package com.example.assignment3.EntityDetails;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.assignment3.Entity.RentalRecord;
 import com.example.assignment3.Entity.User;
 import com.example.assignment3.Entity.Location;
+import com.example.assignment3.R;
 import com.example.assignment3.component.FirebaseAction;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,7 +23,7 @@ public class RecordDetailsActivity extends AppCompatActivity {
     private TextView endDateTextView;
     private TextView totalPriceTextView;
     private TextView statusTextView;
-    private Button logoutButton;
+    private Button goBackButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class RecordDetailsActivity extends AppCompatActivity {
         endDateTextView = findViewById(R.id.textViewEndDateValue);
         totalPriceTextView = findViewById(R.id.textViewTotalPriceValue);
         statusTextView = findViewById(R.id.textViewStatusValue);
-        logoutButton = findViewById(R.id.buttonLogout);
+        goBackButton = findViewById(R.id.goBackButton);
 
         // Get the RentalRecord ID from the intent
         int recordId = getIntent().getIntExtra("recordID", 0);
@@ -60,7 +61,7 @@ public class RecordDetailsActivity extends AppCompatActivity {
         });
 
         // Set logout button click listener
-        logoutButton.setOnClickListener(v -> finish());
+        goBackButton.setOnClickListener(v -> finish());
     }
 
     private void displayRecordDetails(RentalRecord record) {

@@ -1,106 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:padding="16dp">
 
+    <!-- Title -->
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Personal Information"
-        android:textSize="24sp"
+        android:textSize="28sp"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="24dp" />
 
-    <!-- Name TextView -->
-    <TextView
-        android:id="@+id/nameLabel"
-        android:layout_width="wrap_content"
+    <!-- Name Section -->
+    <RelativeLayout
+        android:id="@+id/nameSection"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Name:"
-        android:textSize="18sp"
         android:layout_below="@id/textView"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp">
 
-    <TextView
-        android:id="@+id/nameTextView"
+        <TextView
+            android:id="@+id/nameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name:"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="20sp"
+            android:layout_below="@id/nameLabel"
+            android:layout_marginStart="32dp" />
+
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Name"
+            android:textSize="20sp"
+            android:layout_below="@id/nameLabel"
+            android:layout_marginStart="32dp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <!-- Birthday Section -->
+    <RelativeLayout
+        android:id="@+id/birthdaySection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nameSection"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/birthdayLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Birthday:"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/birthdayTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="20sp"
+            android:layout_below="@id/birthdayLabel"
+            android:layout_marginStart="32dp" />
+
+        <LinearLayout
+            android:id="@+id/birthdayEditLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/birthdayLabel"
+            android:layout_marginStart="32dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Spinner
+                android:id="@+id/daySpinner"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/dates_array" />
+
+            <Spinner
+                android:id="@+id/monthSpinner"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/months_array"
+                android:layout_marginStart="8dp" />
+
+            <Spinner
+                android:id="@+id/yearSpinner"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/years_array"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Role Section -->
+    <RelativeLayout
+        android:id="@+id/roleSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/birthdaySection"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/roleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Role:"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/roleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="20sp"
+            android:layout_below="@id/roleLabel"
+            android:layout_marginStart="32dp" />
+    </RelativeLayout>
+
+    <!-- Balance Section -->
+    <RelativeLayout
+        android:id="@+id/balanceSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/roleSection"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/balanceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Balance:"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/balanceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="20sp"
+            android:layout_below="@id/balanceLabel"
+            android:layout_marginStart="32dp" />
+    </RelativeLayout>
+
+    <!-- Edit Profile Button -->
+    <Button
+        android:id="@+id/edit_profile_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
-        android:layout_below="@id/textView"
-        android:layout_toEndOf="@id/nameLabel"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp" />
+        android:text="Edit Profile"
+        android:layout_below="@id/balanceSection"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true" />
 
-    <!-- Birthday TextView -->
-    <TextView
-        android:id="@+id/birthdayLabel"
-        android:layout_width="wrap_content"
+    <!-- Grid Layout for Buttons -->
+    <GridLayout
+        android:id="@+id/buttonGridLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Birthday:"
-        android:textSize="18sp"
-        android:layout_below="@id/nameTextView"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp" />
+        android:layout_below="@id/edit_profile_button"
+        android:layout_marginTop="16dp"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp">
 
-    <TextView
-        android:id="@+id/birthdayTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
-        android:layout_below="@id/nameTextView"
-        android:layout_toEndOf="@id/birthdayLabel"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp" />
+        <Button
+            android:id="@+id/add_balance_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Add Balance"
+            android:layout_columnWeight="1"
+            android:layout_row="0"
+            android:layout_column="0" />
 
-    <!-- Role TextView -->
-    <TextView
-        android:id="@+id/roleLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Role:"
-        android:textSize="18sp"
-        android:layout_below="@id/birthdayTextView"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp" />
+        <Button
+            android:id="@+id/change_to_host_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Change to Host"
+            android:layout_columnWeight="1"
+            android:layout_row="0"
+            android:layout_column="1" />
 
-    <TextView
-        android:id="@+id/roleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
-        android:layout_below="@id/birthdayTextView"
-        android:layout_toEndOf="@id/roleLabel"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp" />
+        <Button
+            android:id="@+id/finish_edit_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Finish Edit"
+            android:layout_columnWeight="1"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:backgroundTint="@android:color/holo_green_light"
+            android:visibility="gone" />
 
-    <!-- Balance TextView -->
-    <TextView
-        android:id="@+id/balanceLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Balance:"
-        android:textSize="18sp"
-        android:layout_below="@id/roleTextView"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp" />
-
-    <TextView
-        android:id="@+id/balanceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
-        android:layout_below="@id/roleTextView"
-        android:layout_toEndOf="@id/balanceLabel"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp" />
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:layout_columnWeight="1"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:visibility="gone" />
+    </GridLayout>
 
     <!-- Log Out Button -->
     <Button
@@ -110,17 +236,7 @@
         android:text="Log Out"
         android:textColor="@android:color/white"
         android:backgroundTint="@android:color/holo_red_dark"
-        android:layout_below="@id/balanceTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp" />
-
-    <!-- Add Balance Button -->
-    <Button
-        android:id="@+id/add_balance_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Balance"
-        android:layout_below="@id/logout_button"
+        android:layout_below="@id/buttonGridLayout"
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true" />
 
@@ -132,7 +248,7 @@
         android:text="Delete Account"
         android:textColor="@android:color/white"
         android:backgroundTint="@android:color/holo_red_dark"
-        android:layout_below="@id/add_balance_button"
+        android:layout_below="@id/logout_button"
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

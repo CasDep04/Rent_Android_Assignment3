@@ -2,16 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".EntityDetails.RecordDetailsActivity">
+    tools:context=".EntityDetails.UserDetailActivity">
 
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rental Record Details"
+        android:text="User Details"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,10 +21,10 @@
         android:layout_marginTop="16dp" />
 
     <TextView
-        android:id="@+id/textViewGuestName"
+        android:id="@+id/textViewUserId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Guest Name:"
+        android:text="User ID:"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
@@ -32,144 +33,122 @@
         android:layout_marginStart="16dp" />
 
     <TextView
-        android:id="@+id/textViewGuestNameValue"
+        android:id="@+id/textViewUserIdValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
-        app:layout_constraintStart_toEndOf="@id/textViewGuestName"
+        app:layout_constraintStart_toEndOf="@id/textViewUserId"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp" />
 
     <TextView
-        android:id="@+id/textViewHostName"
+        android:id="@+id/textViewUserEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Host Name:"
+        android:text="Email:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewGuestName"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserId"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp" />
 
     <TextView
-        android:id="@+id/textViewHostNameValue"
+        android:id="@+id/textViewUserEmailValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewGuestName"
-        app:layout_constraintStart_toEndOf="@id/textViewHostName"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserId"
+        app:layout_constraintStart_toEndOf="@id/textViewUserEmail"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp" />
 
     <TextView
-        android:id="@+id/textViewLocationName"
+        android:id="@+id/textViewUserRole"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Location:"
+        android:text="Role:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewHostName"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserEmail"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp" />
 
     <TextView
-        android:id="@+id/textViewLocationNameValue"
+        android:id="@+id/textViewUserRoleValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewHostName"
-        app:layout_constraintStart_toEndOf="@id/textViewLocationName"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserEmail"
+        app:layout_constraintStart_toEndOf="@id/textViewUserRole"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp" />
 
     <TextView
-        android:id="@+id/textViewStartDate"
+        android:id="@+id/textViewUserBalance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Date:"
+        android:text="Balance:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationName"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserRole"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp" />
 
     <TextView
-        android:id="@+id/textViewStartDateValue"
+        android:id="@+id/textViewUserBalanceValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationName"
-        app:layout_constraintStart_toEndOf="@id/textViewStartDate"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserRole"
+        app:layout_constraintStart_toEndOf="@id/textViewUserBalance"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp" />
 
     <TextView
-        android:id="@+id/textViewEndDate"
+        android:id="@+id/textViewUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="End Date:"
+        android:text="Name:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewStartDate"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserBalance"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp" />
 
     <TextView
-        android:id="@+id/textViewEndDateValue"
+        android:id="@+id/textViewUserNameValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewStartDate"
-        app:layout_constraintStart_toEndOf="@id/textViewEndDate"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserBalance"
+        app:layout_constraintStart_toEndOf="@id/textViewUserName"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp" />
 
     <TextView
-        android:id="@+id/textViewTotalPrice"
+        android:id="@+id/textViewUserDateOfBirth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Total Price:"
+        android:text="Date of Birth:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewEndDate"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserName"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp" />
 
     <TextView
-        android:id="@+id/textViewTotalPriceValue"
+        android:id="@+id/textViewUserDateOfBirthValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewEndDate"
-        app:layout_constraintStart_toEndOf="@id/textViewTotalPrice"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp" />
-
-    <TextView
-        android:id="@+id/textViewStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Status:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/textViewTotalPrice"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp" />
-
-    <TextView
-        android:id="@+id/textViewStatusValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewTotalPrice"
-        app:layout_constraintStart_toEndOf="@id/textViewStatus"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserName"
+        app:layout_constraintStart_toEndOf="@id/textViewUserDateOfBirth"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp" />
 
@@ -178,7 +157,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Go Back"
-        app:layout_constraintTop_toBottomOf="@id/textViewStatusValue"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserDateOfBirthValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />

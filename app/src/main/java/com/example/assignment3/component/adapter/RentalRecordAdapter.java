@@ -11,7 +11,9 @@ import androidx.core.content.ContextCompat;
 import android.widget.ArrayAdapter;
 
 import com.example.assignment3.Entity.RentalRecord;
+import com.example.assignment3.Entity.User;
 import com.example.assignment3.R;
+import com.example.assignment3.component.FirebaseAction;
 
 import java.util.List;
 
@@ -35,17 +37,17 @@ public class RentalRecordAdapter extends ArrayAdapter<RentalRecord> {
 
         RentalRecord record = records.get(position);
 
-        TextView guestIdTextView = convertView.findViewById(R.id.textViewGuestIdValue);
-        TextView startDateTextView = convertView.findViewById(R.id.textViewStartDateValue);
+        TextView recordIdTextView = convertView.findViewById(R.id.textViewRecordIdValue);
+        TextView guestNameTextView = convertView.findViewById(R.id.textViewGuestNameValue);
+        TextView hostNameTextView = convertView.findViewById(R.id.textViewHostNameValue);
         TextView statusTextView = convertView.findViewById(R.id.textViewStatusValue);
 
-        guestIdTextView.setText(String.valueOf(record.getGuestId()));
-        startDateTextView.setText(record.getStartDate());
+        recordIdTextView.setText(String.valueOf(record.getId()));
         statusTextView.setText(record.getStatus());
 
         // Set the status text color based on the status
         switch (record.getStatus().toLowerCase()) {
-            case "completed":
+            case "accepted":
                 statusTextView.setTextColor(ContextCompat.getColor(context, android.R.color.holo_green_dark));
                 break;
             case "pending":
@@ -58,6 +60,24 @@ public class RentalRecordAdapter extends ArrayAdapter<RentalRecord> {
                 statusTextView.setTextColor(ContextCompat.getColor(context, android.R.color.black));
                 break;
         }
+
+        FirebaseAction.findUserById(record.getGuestId()).addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                User guest = task.getResult();
+                guestNameTextView.setText(guest.getName());
+            } else {
+                guestNameTextView.setText("Unknown Guest");
+            }
+        });
+
+        FirebaseAction.findUserById(record.getHostId()).addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                User host = task.getResult();
+                hostNameTextView.setText(host.getName());
+            } else {
+                hostNameTextView.setText("Unknown Host");
+            }
+        });
 
         return convertView;
     }
