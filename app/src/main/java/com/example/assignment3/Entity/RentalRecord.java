@@ -4,8 +4,8 @@ import android.util.Base64DataException;
 
 public class RentalRecord {
     private String id;
-    private String guestId;
-    private String hostId;
+    private int guestId;
+    private int hostId;
     private String locationId;
     private String name;
     private String startDate;
@@ -17,7 +17,7 @@ public class RentalRecord {
     }
 
     // Constructor with the new status parameter
-    public RentalRecord(String id, String guestId, String hostId, String locationId, String name, String startDate, String endDate, double price, String status) {
+    public RentalRecord(String id, int guestId, int hostId, String locationId, String name, String startDate, String endDate, double price, String status) {
         this.id = id;
         this.guestId = guestId;
         this.hostId = hostId;
@@ -38,19 +38,19 @@ public class RentalRecord {
         this.id = id;
     }
 
-    public String getGuestId() {  // Corrected to return String
+    public int getGuestId() {
         return guestId;
     }
 
-    public void setGuestId(String guestId) {  // Corrected to accept String
+    public void setGuestId(int guestId) {
         this.guestId = guestId;
     }
 
-    public String getHostId() {  // Corrected to return String
+    public int getHostId() {
         return hostId;
     }
 
-    public void setHostId(String hostId) {  // Corrected to accept String
+    public void setHostId(int hostId) {
         this.hostId = hostId;
     }
 

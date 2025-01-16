@@ -31,23 +31,23 @@ import java.util.concurrent.TimeUnit;
 
 public class RentalDetailActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
+//    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rental_detail);
 
-        // Initialize FirebaseAuth and Firestore
-        mAuth = FirebaseAuth.getInstance();
+//        // Initialize FirebaseAuth and Firestore
+//        mAuth = FirebaseAuth.getInstance();
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        if (currentUser == null) {
+//            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
 
-        String currentUserId = currentUser.getUid(); // Convert UID to int.
+//        String currentUserId = currentUser.getUid();
 
 
 
@@ -114,13 +114,14 @@ public class RentalDetailActivity extends AppCompatActivity {
                 double totalPrice = numberOfNights * markerData.getPricePerNight();
 
                 // Get hostId and locationId from MarkerData
-                String hostId = markerData.getHostId();
+                int hostId = markerData.getHostId();
+                int guestId = markerData.getGuestId();
                 String locationId = markerData.getLocationId();
                 String name = markerData.getName();
                 // Create a rental record
                 RentalRecord rentalRecord = new RentalRecord(
                         null, // auto-generated ID
-                        currentUserId, // guestId
+                        guestId, // guestId
                         hostId, // hostId from rentals document
                         locationId, // id from rentals document
                         name,

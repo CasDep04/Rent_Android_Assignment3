@@ -48,11 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class GuestMainActivity extends AppCompatActivity {
 
@@ -190,9 +185,14 @@ public class GuestMainActivity extends AppCompatActivity {
                         int pricePerNight = document.getLong("pricePerNight").intValue();
                         String imageUrl = document.getString("imageUrl");
                         List<String> facilities = (List<String>) document.get("facilities");
-                        String hostId = document.getString("hostId");
+                        int hostId = document.getLong("hostId").intValue();
                         String locationId = document.getString("id");
 
+                        Bundle extras = getIntent().getExtras();
+                        int guestId = 0;
+                        if (extras != null) {
+                            guestId = extras.getInt("userId");
+                        }
 
                         // Create MarkerData object
                         MarkerData markerData = new MarkerData(
@@ -204,7 +204,8 @@ public class GuestMainActivity extends AppCompatActivity {
                                 pricePerNight,
                                 facilities,
                                 hostId,
-                                locationId
+                                locationId,
+                                guestId
                         );
 
                         // Add marker to the map
