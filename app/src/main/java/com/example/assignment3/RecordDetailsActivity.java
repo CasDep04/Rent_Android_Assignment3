@@ -85,43 +85,43 @@ public class RecordDetailsActivity extends AppCompatActivity {
                 break;
         }
 
-        // Fetch and display guest name
-        FirebaseAction.findUserById(record.getGuestId()).addOnCompleteListener(new OnCompleteListener<User>() {
-            @Override
-            public void onComplete(@NonNull Task<User> task) {
-                if (task.isSuccessful() && task.getResult() != null) {
-                    User guest = task.getResult();
-                    guestNameTextView.setText(guest.getName());
-                } else {
-                    guestNameTextView.setText("Unknown Guest");
-                }
-            }
-        });
-
-        // Fetch and display host name
-        FirebaseAction.findUserById(record.getHostId()).addOnCompleteListener(new OnCompleteListener<User>() {
-            @Override
-            public void onComplete(@NonNull Task<User> task) {
-                if (task.isSuccessful() && task.getResult() != null) {
-                    User host = task.getResult();
-                    hostNameTextView.setText(host.getName());
-                } else {
-                    hostNameTextView.setText("Unknown Host");
-                }
-            }
-        });
-
-        // Fetch and display location name
-        FirebaseAction.findLocationById(record.getLocationId()).addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if (task.isSuccessful() && task.getResult() != null) {
-                    Location location = task.getResult();
-                    locationNameTextView.setText(location.getAddress());
-                } else {
-                    locationNameTextView.setText("Unknown Location");
-                }
-            }
-        });
+//        // Fetch and display guest name
+//        FirebaseAction.findUserById(record.getGuestId()).addOnCompleteListener(new OnCompleteListener<User>() {
+//            @Override
+//            public void onComplete(@NonNull Task<User> task) {
+//                if (task.isSuccessful() && task.getResult() != null) {
+//                    User guest = task.getResult();
+//                    guestNameTextView.setText(guest.getName());
+//                } else {
+//                    guestNameTextView.setText("Unknown Guest");
+//                }
+//            }
+//        });
+//
+//        // Fetch and display host name
+//        FirebaseAction.findUserById(record.getHostId()).addOnCompleteListener(new OnCompleteListener<User>() {
+//            @Override
+//            public void onComplete(@NonNull Task<User> task) {
+//                if (task.isSuccessful() && task.getResult() != null) {
+//                    User host = task.getResult();
+//                    hostNameTextView.setText(host.getName());
+//                } else {
+//                    hostNameTextView.setText("Unknown Host");
+//                }
+//            }
+//        });
+//
+//        // Fetch and display location name
+//        FirebaseAction.findLocationById(record.getLocationId()).addOnCompleteListener(new OnCompleteListener<Location>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Location> task) {
+//                if (task.isSuccessful() && task.getResult() != null) {
+//                    Location location = task.getResult();
+//                    locationNameTextView.setText(location.getAddress());
+//                } else {
+//                    locationNameTextView.setText("Unknown Location");
+//                }
+//            }
+//        });
     }
 }
