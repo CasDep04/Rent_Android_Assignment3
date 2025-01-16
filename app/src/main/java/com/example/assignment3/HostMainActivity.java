@@ -14,8 +14,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.assignment3.fragments.HostHome;
 import com.example.assignment3.fragments.HostHomestay;
-import com.example.assignment3.fragments.HostNotification;
 import com.example.assignment3.fragments.HostProfile;
+import com.example.assignment3.fragments.HostStatus;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HostMainActivity extends AppCompatActivity {
@@ -45,8 +45,8 @@ public class HostMainActivity extends AppCompatActivity {
                     fragment = new HostHome();
                 } else if (itemId == R.id.host_homestay) {
                     fragment = new HostHomestay();
-                } else if (itemId == R.id.host_notification) {
-                    fragment = new HostNotification();
+                } else if (itemId == R.id.host_status) {
+                    fragment = new HostStatus();
                 } else { // Host Profile
                     fragment = new HostProfile();
                 }

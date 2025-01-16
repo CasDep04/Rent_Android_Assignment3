@@ -13,9 +13,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <item
-        android:id="@+id/host_notification"
-        android:title="Notification"
-        android:icon="@drawable/baseline_notifications_24"
+        android:id="@+id/host_status"
+        android:title="Status"
+        android:icon="@drawable/baseline_pending_actions_24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <item
