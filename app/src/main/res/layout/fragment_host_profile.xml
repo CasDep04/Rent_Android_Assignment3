@@ -52,16 +52,20 @@
             android:text="Date of Birth: "
             android:layout_marginBottom="8dp"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/withdraw_btn"
+            android:background="@drawable/custom_button"
             android:text="Withdraw"
+            android:textColor="@color/white"
             android:layout_marginBottom="13dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/logout_btn"
+            android:background="@drawable/custom_button"
             android:text="Logout"
+            android:textColor="@color/white"
             android:layout_marginBottom="13dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
