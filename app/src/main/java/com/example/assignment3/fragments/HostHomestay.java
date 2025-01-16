@@ -34,6 +34,7 @@ public class HostHomestay extends Fragment {
     private RecyclerView recyclerView;
     private RentalAdapter rentalAdapter;
     private List<Rental> rentalList;
+    private List<Rental> originalList; // Master list holding all rentals
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private SearchView searchView;
@@ -48,12 +49,7 @@ public class HostHomestay extends Fragment {
 
         // Retrieve the user ID from the arguments
         Bundle bundle = getArguments();
-        final int userId;
-        if (bundle != null) {
-            userId = bundle.getInt("userId", -1);
-        } else {
-            userId = -1;
-        }
+        final int userId = bundle != null ? bundle.getInt("userId", -1) : -1;
         Log.d(TAG, "onCreateView: Retrieved user ID: " + userId);
 
         // Initialize RecyclerView
@@ -64,7 +60,8 @@ public class HostHomestay extends Fragment {
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        // Initialize rental list
+        // Initialize rental lists
+        originalList = new ArrayList<>(); // Master list to store all fetched rentals
         rentalList = new ArrayList<>();
 
         // Set up the adapter
@@ -118,25 +115,8 @@ public class HostHomestay extends Fragment {
         List<Rental> filteredList = new ArrayList<>();
         String selectedType = (String) spinner.getSelectedItem();  // Get selected property type from the spinner
 
-        // Check if we should fetch everything
-        if (newText.isEmpty() && selectedType.equals("All")) {
-            // Pass the userId to fetchRentalsFromFirestore
-            Bundle bundle = getArguments();
-            final int userId;
-            if (bundle != null) {
-                userId = bundle.getInt("userId", -1);
-            } else {
-                userId = -1;
-            }
-            if (!isFetching) {
-                isFetching = true;  // Set the flag to true before fetching
-                fetchRentalsFromFirestore(userId);
-            }
-            return;
-        }
-
-        // Apply filter based on search text and spinner type
-        for (Rental rental : rentalList) {
+        // Filter from the original list
+        for (Rental rental : originalList) {
             boolean matchesSearch = newText.isEmpty() || rental.getName().toLowerCase().contains(newText.toLowerCase());
             boolean matchesType = selectedType.equals("All") || rental.getPropertyType().equalsIgnoreCase(selectedType);
 
@@ -156,21 +136,21 @@ public class HostHomestay extends Fragment {
 
     // Method to fetch rentals from Firestore
     private void fetchRentalsFromFirestore(int userId) {
+        String hostId = auth.getCurrentUser().getUid();
         db.collection("rentals")
                 .whereEqualTo("hostId", userId)
                 .get()
                 .addOnCompleteListener(task -> {
-                    isFetching = false;  // Reset the flag after fetching
                     if (task.isSuccessful()) {
+                        originalList.clear();
                         rentalList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Rental rental = document.toObject(Rental.class);
                             rental.setId(document.getId());
-                            rentalList.add(rental);
+                            originalList.add(rental);  // Populate master list
                         }
-                        // Apply filtering after data fetch
-                        filterList(searchView.getQuery().toString());  // Ensure that the list is filtered according to the search
-                        rentalAdapter.notifyDataSetChanged();  // Notify adapter to refresh the UI
+                        rentalList.addAll(originalList); // Initially display all rentals
+                        rentalAdapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(getContext(), "Error getting rentals.", Toast.LENGTH_SHORT).show();
                     }

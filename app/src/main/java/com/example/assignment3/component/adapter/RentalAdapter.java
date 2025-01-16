@@ -76,6 +76,11 @@ public class RentalAdapter extends RecyclerView.Adapter<RentalAdapter.RentalView
                 .setNegativeButton("No", null)
                 .show();
     }
+    public void setFilteredList(List<Rental> filteredList) {
+        rentalList.clear();  // Clear the existing list
+        rentalList.addAll(filteredList);  // Add filtered items
+        notifyDataSetChanged();
+    }
 
     private void deleteRental(Rental rental, int position) {
         // Get a reference to the image in Firebase Storage
@@ -115,9 +120,5 @@ public class RentalAdapter extends RecyclerView.Adapter<RentalAdapter.RentalView
         }
     }
 
-    public void setFilteredList(List<Rental> filteredList) {
-        rentalList.clear();  // Clear the existing list
-        rentalList.addAll(filteredList);  // Add filtered items
-        notifyDataSetChanged();
-    }
+
 }

@@ -40,8 +40,8 @@
             android:id="@+id/buttonLocations"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Locations"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="Locations" />
 
         <Button
             android:id="@+id/buttonReviews"
