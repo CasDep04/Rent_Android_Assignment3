@@ -98,6 +98,11 @@ public class RentalAdapter extends RecyclerView.Adapter<RentalAdapter.RentalView
             Toast.makeText(context, "Failed to delete image", Toast.LENGTH_SHORT).show();
         });
     }
+    public void setFilteredList(List<Rental> filteredList) {
+        rentalList.clear();  // Clear the existing list
+        rentalList.addAll(filteredList);  // Add filtered items
+        notifyDataSetChanged();
+    }
 
     static class RentalViewHolder extends RecyclerView.ViewHolder {
         TextView homestayName, homestayAddress, homestayPrice, propertyType;
@@ -115,9 +120,5 @@ public class RentalAdapter extends RecyclerView.Adapter<RentalAdapter.RentalView
         }
     }
 
-    public void setFilteredList(List<Rental> filteredList) {
-        rentalList.clear();  // Clear the existing list
-        rentalList.addAll(filteredList);  // Add filtered items
-        notifyDataSetChanged();
-    }
+
 }

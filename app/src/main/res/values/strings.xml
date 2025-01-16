@@ -99,5 +99,6 @@
         <item>Villa</item>
         <item>House</item>
         <item>Apartment</item>
+        <item>Penthouse</item>
     </string-array>
 </resources>
