@@ -4,15 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import android.widget.ArrayAdapter;
-
-import com.example.assignment3.Entity.RentalRecord;
 import com.example.assignment3.R;
-
+import com.example.assignment3.Entity.RentalRecord;
 import java.util.List;
 
 public class RentalRecordAdapter extends ArrayAdapter<RentalRecord> {
@@ -35,29 +32,15 @@ public class RentalRecordAdapter extends ArrayAdapter<RentalRecord> {
 
         RentalRecord record = records.get(position);
 
-        TextView guestIdTextView = convertView.findViewById(R.id.textViewGuestIdValue);
-        TextView startDateTextView = convertView.findViewById(R.id.textViewStartDateValue);
+        TextView recordIdTextView = convertView.findViewById(R.id.textViewRecordIdValue);
+        TextView guestNameTextView = convertView.findViewById(R.id.textViewGuestNameValue);
+        TextView hostNameTextView = convertView.findViewById(R.id.textViewHostNameValue);
         TextView statusTextView = convertView.findViewById(R.id.textViewStatusValue);
 
-        guestIdTextView.setText(String.valueOf(record.getGuestId()));
-        startDateTextView.setText(record.getStartDate());
-        statusTextView.setText(record.getStatus());
-
-        // Set the status text color based on the status
-        switch (record.getStatus().toLowerCase()) {
-            case "completed":
-                statusTextView.setTextColor(ContextCompat.getColor(context, android.R.color.holo_green_dark));
-                break;
-            case "pending":
-                statusTextView.setTextColor(ContextCompat.getColor(context, android.R.color.holo_orange_dark));
-                break;
-            case "rejected":
-                statusTextView.setTextColor(ContextCompat.getColor(context, android.R.color.holo_red_dark));
-                break;
-            default:
-                statusTextView.setTextColor(ContextCompat.getColor(context, android.R.color.black));
-                break;
-        }
+        recordIdTextView.setText(String.valueOf(record.getId()));
+        guestNameTextView.setText(String.valueOf(record.getGuestId()));
+        hostNameTextView.setText(String.valueOf(record.getHostId()));
+        statusTextView.setText(String.valueOf(record.getStatus()));
 
         return convertView;
     }
