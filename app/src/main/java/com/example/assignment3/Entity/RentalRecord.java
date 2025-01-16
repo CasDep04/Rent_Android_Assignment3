@@ -1,10 +1,13 @@
 package com.example.assignment3.Entity;
 
+import android.util.Base64DataException;
+
 public class RentalRecord {
     private String id;
     private String guestId;
     private String hostId;
     private String locationId;
+    private String name;
     private String startDate;
     private String endDate;
     private double totalPrice;
@@ -14,11 +17,12 @@ public class RentalRecord {
     }
 
     // Constructor with the new status parameter
-    public RentalRecord(String id, String guestId, String hostId, String locationId, String startDate, String endDate, double price, String status) {
+    public RentalRecord(String id, String guestId, String hostId, String locationId, String name, String startDate, String endDate, double price, String status) {
         this.id = id;
         this.guestId = guestId;
         this.hostId = hostId;
         this.locationId = locationId;
+        this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
         this.totalPrice = price;
@@ -88,5 +92,13 @@ public class RentalRecord {
 
     public void setStatus(String status) {
         this.status = status;  // Setter for status
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

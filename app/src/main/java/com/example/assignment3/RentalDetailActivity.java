@@ -116,13 +116,14 @@ public class RentalDetailActivity extends AppCompatActivity {
                 // Get hostId and locationId from MarkerData
                 String hostId = markerData.getHostId();
                 String locationId = markerData.getLocationId();
-
+                String name = markerData.getName();
                 // Create a rental record
                 RentalRecord rentalRecord = new RentalRecord(
                         null, // auto-generated ID
                         currentUserId, // guestId
                         hostId, // hostId from rentals document
                         locationId, // id from rentals document
+                        name,
                         startDate,
                         endDate,
                         totalPrice,
