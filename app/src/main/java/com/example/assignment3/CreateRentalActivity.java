@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -18,7 +19,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.assignment3.R;
 import com.example.assignment3.Entity.Rental;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class CreateRentalActivity extends AppCompatActivity {
+
+    private static final String TAG = "CreateRentalActivity";
 
     private EditText homestayName, homestayAddress, homestayPrice, homestayDescription;
     private RadioGroup propertyTypeGroup;
@@ -70,9 +72,17 @@ public class CreateRentalActivity extends AppCompatActivity {
         selectImageButton.setOnClickListener(v -> selectImage());
         mapIcon.setOnClickListener(v -> openMapsActivity());
         publishButton.setOnClickListener(v -> publishRental());
+
+        Log.d(TAG, "onCreate: Activity created");
+
+        // Retrieve the user ID from the Intent
+        Intent intent = getIntent();
+        int userId = intent.getIntExtra("userId", -1);
+        Log.d(TAG, "onCreate: Retrieved user ID: " + userId);
     }
 
     private void selectImage() {
+        Log.d(TAG, "selectImage: Selecting image");
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
@@ -86,6 +96,7 @@ public class CreateRentalActivity extends AppCompatActivity {
             imageUri = data.getData();
             selectedImage.setImageURI(imageUri);
             selectedImage.setVisibility(View.VISIBLE);
+            Log.d(TAG, "onActivityResult: Image selected: " + imageUri);
         } else if (requestCode == 2 && resultCode == RESULT_OK && data != null) {
             LatLng selectedLocation = data.getParcelableExtra("selected_location");
             if (selectedLocation != null) {
@@ -96,20 +107,23 @@ public class CreateRentalActivity extends AppCompatActivity {
                     List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
                     if (addresses != null && !addresses.isEmpty()) {
                         homestayAddress.setText(addresses.get(0).getAddressLine(0));
+                        Log.d(TAG, "onActivityResult: Address set: " + addresses.get(0).getAddressLine(0));
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "onActivityResult: Geocoder exception", e);
                 }
             }
         }
     }
 
     private void openMapsActivity() {
+        Log.d(TAG, "openMapsActivity: Opening maps activity");
         Intent intent = new Intent(this, MapsActivity.class);
         startActivityForResult(intent, 2);
     }
 
     private void publishRental() {
+        Log.d(TAG, "publishRental: Publishing rental");
         String name = homestayName.getText().toString().trim();
         String address = homestayAddress.getText().toString().trim();
         double price = Double.parseDouble(homestayPrice.getText().toString().trim());
@@ -121,7 +135,10 @@ public class CreateRentalActivity extends AppCompatActivity {
         if (facilityLaundry.isChecked()) facilities.add("Laundry Services");
         if (facilityKitchen.isChecked()) facilities.add("Shared Kitchen");
 
-        String hostId = auth.getCurrentUser().getUid();
+        // Use the retrieved user ID as hostId
+        Intent intent = getIntent();
+        int hostId = intent.getIntExtra("userId", -1);
+        Log.d(TAG, "publishRental: Host ID: " + hostId);
 
         if (imageUri != null) {
             StorageReference fileReference = storageReference.child(System.currentTimeMillis() + ".jpg");
@@ -131,21 +148,26 @@ public class CreateRentalActivity extends AppCompatActivity {
                         Rental rental = new Rental(null, hostId, name, address, price, description, propertyType, facilities, imageUrl, latitude, longitude);
                         db.collection("rentals").add(rental).addOnSuccessListener(documentReference -> {
                             rental.setId(documentReference.getId());
-                            db.collection("rentals").document(documentReference.getId()).set(rental).addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
+                            db.collection("rentals").document(documentReference.getId()).set(rental).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    Log.d(TAG, "publishRental: Rental published successfully");
                                     Toast.makeText(CreateRentalActivity.this, "Rental published successfully", Toast.LENGTH_SHORT).show();
                                     finish();
                                 } else {
+                                    Log.e(TAG, "publishRental: Failed to publish rental");
                                     Toast.makeText(CreateRentalActivity.this, "Failed to publish rental", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }).addOnFailureListener(e -> {
+                            Log.e(TAG, "publishRental: Error adding rental to Firestore", e);
                             Toast.makeText(CreateRentalActivity.this, "Error adding rental to Firestore", Toast.LENGTH_SHORT).show();
                         });
                     })).addOnFailureListener(e -> {
+                        Log.e(TAG, "publishRental: Error uploading image to Firebase Storage", e);
                         Toast.makeText(CreateRentalActivity.this, "Error uploading image to Firebase Storage", Toast.LENGTH_SHORT).show();
                     });
         } else {
+            Log.w(TAG, "publishRental: No image selected");
             Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
         }
     }

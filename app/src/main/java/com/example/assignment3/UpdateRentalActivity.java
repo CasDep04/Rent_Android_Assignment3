@@ -15,13 +15,11 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.example.assignment3.R;
 import com.example.assignment3.Entity.Rental;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.DocumentReference;
@@ -44,6 +42,7 @@ public class UpdateRentalActivity extends AppCompatActivity {
     private String rentalId;
     private double latitude, longitude;
     private String oldImageUrl;
+    private int userId;
 
     private FirebaseFirestore db;
     private StorageReference storageReference;
@@ -71,6 +70,8 @@ public class UpdateRentalActivity extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference("rental_images");
 
         rentalId = getIntent().getStringExtra("RENTAL_ID");
+        userId = getIntent().getIntExtra("USER_ID", -1);
+
         if (rentalId != null) {
             loadRentalDetails(rentalId);
         } else {

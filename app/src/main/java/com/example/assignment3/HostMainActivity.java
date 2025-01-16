@@ -1,6 +1,8 @@
 package com.example.assignment3;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -14,10 +16,10 @@ import com.example.assignment3.fragments.HostHome;
 import com.example.assignment3.fragments.HostHomestay;
 import com.example.assignment3.fragments.HostNotification;
 import com.example.assignment3.fragments.HostProfile;
-import com.example.assignment3.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HostMainActivity extends AppCompatActivity {
+    private static final String TAG = "HostMainActivity";
     private BottomNavigationView bottomNavigationView;
     private FrameLayout frameLayout;
 
@@ -29,23 +31,38 @@ public class HostMainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_nav_view);
         frameLayout = findViewById(R.id.frame_layout);
 
+        // Retrieve the user ID from the Intent
+        Intent intent = getIntent();
+        int userId = intent.getIntExtra("userId", -1);
+        Log.d(TAG, "onCreate: Retrieved user ID: " + userId);
+
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
+                Fragment fragment;
                 if (itemId == R.id.host_home) {
-                    loadFragment(new HostHome(), false);
+                    fragment = new HostHome();
                 } else if (itemId == R.id.host_homestay) {
-                    loadFragment(new HostHomestay(), false);
+                    fragment = new HostHomestay();
                 } else if (itemId == R.id.host_notification) {
-                    loadFragment(new HostNotification(), false);
+                    fragment = new HostNotification();
                 } else { // Host Profile
-                    loadFragment(new HostProfile(), false);
+                    fragment = new HostProfile();
                 }
+                Bundle bundle = new Bundle();
+                bundle.putInt("userId", userId);
+                fragment.setArguments(bundle);
+                loadFragment(fragment, false);
                 return true;
             }
         });
-        loadFragment(new HostHome(), true);
+
+        Fragment fragment = new HostHome();
+        Bundle bundle = new Bundle();
+        bundle.putInt("userId", userId);
+        fragment.setArguments(bundle);
+        loadFragment(fragment, true);
     }
 
     private void loadFragment(Fragment fragment, boolean isAppInitialized) {
@@ -57,7 +74,6 @@ public class HostMainActivity extends AppCompatActivity {
         } else {
             fragmentTransaction.replace(R.id.frame_layout, fragment);
         }
-        fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
 }

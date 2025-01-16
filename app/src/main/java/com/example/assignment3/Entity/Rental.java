@@ -5,7 +5,7 @@ import java.util.List;
 public class Rental {
     // attributes
     private String id;
-    private String hostId;
+    private int hostId;
     private String name;
     private String address;
     private double pricePerNight;
@@ -20,7 +20,7 @@ public class Rental {
         // Default constructor required for calls to DataSnapshot.getValue(Rental.class)
     }
 
-    public Rental(String id, String hostId, String name, String address, double pricePerNight, String description, String propertyType, List<String> facilities, String imageUrl, double latitude, double longitude) {
+    public Rental(String id, int hostId, String name, String address, double pricePerNight, String description, String propertyType, List<String> facilities, String imageUrl, double latitude, double longitude) {
         this.id = id;
         this.hostId = hostId;
         this.name = name;
@@ -38,8 +38,8 @@ public class Rental {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public String getHostId() { return hostId; }
-    public void setHostId(String hostId) { this.hostId = hostId; }
+    public int getHostId() { return hostId; }
+    public void setHostId(int hostId) { this.hostId = hostId; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

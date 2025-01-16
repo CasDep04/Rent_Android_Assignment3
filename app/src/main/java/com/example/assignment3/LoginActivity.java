@@ -2,8 +2,8 @@ package com.example.assignment3;
 
 import android.animation.Animator;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.assignment3.component.Localdatabase.DatabaseHelper;
 import com.example.assignment3.component.Localdatabase.DatabaseManager;
 import com.example.assignment3.component.Utils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = "LoginActivity";
     private FirebaseAuth mAuth;
     private EditText emailEditText, passwordEditText;
     private EditText registerEmailEditText, registerPasswordEditText, registerConfirmPasswordEditText;
@@ -40,10 +40,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        Log.d(TAG, "onCreate: Activity created");
+
         // Force user to log out every time
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
+            Log.d(TAG, "onCreate: User already logged in, signing out");
             mAuth.signOut();  // Force sign out if a user is already signed in
         }
 
@@ -81,6 +84,8 @@ public class LoginActivity extends AppCompatActivity {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
+        Log.d(TAG, "loginUser: Attempting to log in with email: " + email);
+
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(LoginActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
@@ -91,22 +96,24 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            // User signed in successfully, proceed with the logic
+                            Log.d(TAG, "loginUser: Login successful, user ID: " + user.getUid());
                             LocalDB.updateUser(email);
                             goToMainActivity(email);
                         }
                     } else {
-                        // Handle failed authentication
+                        Log.e(TAG, "loginUser: Authentication failed", task.getException());
                         Toast.makeText(LoginActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     public void toRegisterView() {
+        Log.d(TAG, "toRegisterView: Switching to register view");
         animateViewTransition(loginView, registerView, -ANIMATION_DISTANCE, ANIMATION_DISTANCE);
     }
 
     public void toLoginView() {
+        Log.d(TAG, "toLoginView: Switching to login view");
         animateViewTransition(registerView, loginView, ANIMATION_DISTANCE, -ANIMATION_DISTANCE);
     }
 
@@ -115,9 +122,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 viewOut.setVisibility(View.GONE);
+                Log.d(TAG, "animateViewTransition: View out animation ended");
             }
         });
         Utils.animateViewIn(viewIn, directionIn);
+        Log.d(TAG, "animateViewTransition: View in animation started");
     }
 
     public void registerUser(View view) {
@@ -125,6 +134,8 @@ public class LoginActivity extends AppCompatActivity {
         String password = registerPasswordEditText.getText().toString();
         String confirmPassword = registerConfirmPasswordEditText.getText().toString();
         String role = roleSpinner.getSelectedItem().toString();
+
+        Log.d(TAG, "registerUser: Attempting to register with email: " + email);
 
         if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(LoginActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
@@ -139,28 +150,28 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Registration successful
+                        Log.d(TAG, "registerUser: Registration successful");
                         Toast.makeText(LoginActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
 
                         // Sign in the user
                         mAuth.signInWithEmailAndPassword(email, password)
                                 .addOnCompleteListener(this, signInTask -> {
                                     if (signInTask.isSuccessful()) {
-                                        // After sign-in, navigate to the Registration Info activity
                                         FirebaseUser user = signInTask.getResult().getUser();
+                                        Log.d(TAG, "registerUser: Sign-in successful, user ID: " + user.getUid());
                                         Intent i1 = new Intent(LoginActivity.this, RegistrationInfoActivity.class);
                                         i1.putExtra("email", email);
                                         i1.putExtra("role", role);
                                         startActivity(i1);
                                         finish();
                                     } else {
-                                        // Handle sign-in failure
+                                        Log.e(TAG, "registerUser: Sign-in failed", signInTask.getException());
                                         String errorMessage = signInTask.getException() != null ? signInTask.getException().getMessage() : "Sign-in failed.";
                                         Toast.makeText(LoginActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
                                     }
                                 });
                     } else {
-                        // Registration failed - handle errors
+                        Log.e(TAG, "registerUser: Registration failed", task.getException());
                         String errorMessage = task.getException() != null ? task.getException().getMessage() : "Registration failed.";
                         Toast.makeText(LoginActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
                     }
@@ -168,6 +179,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity(String emailIn) {
+        Log.d(TAG, "goToMainActivity: Retrieving user data for email: " + emailIn);
         firebaseDB = FirebaseFirestore.getInstance();
         firebaseDB.collection("users")
                 .whereEqualTo("email", emailIn)
@@ -179,6 +191,7 @@ public class LoginActivity extends AppCompatActivity {
                             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                                 String role = document.getString("role");
                                 double id = document.getDouble("id");
+                                Log.d(TAG, "goToMainActivity: User role: " + role + ", ID: " + id);
                                 Intent intent;
                                 if ("admin".equals(role)) {
                                     intent = new Intent(LoginActivity.this, AdminMainActivity.class);
@@ -186,8 +199,9 @@ public class LoginActivity extends AppCompatActivity {
                                     intent = new Intent(LoginActivity.this, GuestMainActivity.class);
                                 } else if ("host".equals(role)){
                                     intent = new Intent(LoginActivity.this, HostMainActivity.class);
-                                }
-                                else {
+                                    intent.putExtra("userId", (int) id); // Pass the user ID as an int
+                                } else {
+                                    Log.e(TAG, "goToMainActivity: Unknown role");
                                     Toast.makeText(LoginActivity.this, "Unknown role.", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -197,14 +211,14 @@ public class LoginActivity extends AppCompatActivity {
                                 finish();
                             }
                         } else {
+                            Log.e(TAG, "goToMainActivity: No user found with this email");
                             Toast.makeText(LoginActivity.this, "No user found with this email.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Exception e = task.getException();
+                        Log.e(TAG, "goToMainActivity: Error getting documents", e);
                         Toast.makeText(LoginActivity.this, "Error getting documents: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 }
-
-

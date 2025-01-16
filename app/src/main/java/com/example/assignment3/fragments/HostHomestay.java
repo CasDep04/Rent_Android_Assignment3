@@ -29,6 +29,8 @@ import java.util.List;
 
 public class HostHomestay extends Fragment {
 
+    private static final String TAG = "HostHomestay";
+
     private RecyclerView recyclerView;
     private RentalAdapter rentalAdapter;
     private List<Rental> rentalList;
@@ -36,12 +38,23 @@ public class HostHomestay extends Fragment {
     private FirebaseAuth auth;
     private SearchView searchView;
     private Spinner spinner;
+    private boolean isFetching = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_host_homestay, container, false);
+
+        // Retrieve the user ID from the arguments
+        Bundle bundle = getArguments();
+        final int userId;
+        if (bundle != null) {
+            userId = bundle.getInt("userId", -1);
+        } else {
+            userId = -1;
+        }
+        Log.d(TAG, "onCreateView: Retrieved user ID: " + userId);
 
         // Initialize RecyclerView
         recyclerView = view.findViewById(R.id.rental_recycler_view);
@@ -55,7 +68,7 @@ public class HostHomestay extends Fragment {
         rentalList = new ArrayList<>();
 
         // Set up the adapter
-        rentalAdapter = new RentalAdapter(getContext(), rentalList);
+        rentalAdapter = new RentalAdapter(getContext(), rentalList, userId);
         recyclerView.setAdapter(rentalAdapter);
 
         // Initialize SearchView and handle text changes
@@ -95,7 +108,7 @@ public class HostHomestay extends Fragment {
         });
 
         // Fetch data from Firestore initially
-        fetchRentalsFromFirestore();
+        fetchRentalsFromFirestore(userId);
 
         return view;
     }
@@ -107,7 +120,18 @@ public class HostHomestay extends Fragment {
 
         // Check if we should fetch everything
         if (newText.isEmpty() && selectedType.equals("All")) {
-            fetchRentalsFromFirestore();
+            // Pass the userId to fetchRentalsFromFirestore
+            Bundle bundle = getArguments();
+            final int userId;
+            if (bundle != null) {
+                userId = bundle.getInt("userId", -1);
+            } else {
+                userId = -1;
+            }
+            if (!isFetching) {
+                isFetching = true;  // Set the flag to true before fetching
+                fetchRentalsFromFirestore(userId);
+            }
             return;
         }
 
@@ -131,12 +155,12 @@ public class HostHomestay extends Fragment {
     }
 
     // Method to fetch rentals from Firestore
-    private void fetchRentalsFromFirestore() {
-        String hostId = auth.getCurrentUser().getUid();
+    private void fetchRentalsFromFirestore(int userId) {
         db.collection("rentals")
-                .whereEqualTo("hostId", hostId)
+                .whereEqualTo("hostId", userId)
                 .get()
                 .addOnCompleteListener(task -> {
+                    isFetching = false;  // Reset the flag after fetching
                     if (task.isSuccessful()) {
                         rentalList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -153,4 +177,3 @@ public class HostHomestay extends Fragment {
                 });
     }
 }
-

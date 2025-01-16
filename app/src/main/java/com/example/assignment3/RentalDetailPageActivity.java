@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
-import com.example.assignment3.R;
 import com.example.assignment3.Entity.Rental;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,6 +23,7 @@ public class RentalDetailPageActivity extends AppCompatActivity {
     private Button updateButton;
     private LinearLayout facilitiesContainer;
     private FirebaseFirestore db;
+    private int userId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +42,8 @@ public class RentalDetailPageActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         String rentalId = getIntent().getStringExtra("RENTAL_ID");
+        userId = getIntent().getIntExtra("USER_ID", -1);
+
         if (rentalId != null) {
             fetchRentalDetails(rentalId);
         } else {
@@ -54,6 +56,7 @@ public class RentalDetailPageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(RentalDetailPageActivity.this, UpdateRentalActivity.class);
                 intent.putExtra("RENTAL_ID", rentalId);
+                intent.putExtra("USER_ID", userId);
                 startActivityForResult(intent, 1);
             }
         });
