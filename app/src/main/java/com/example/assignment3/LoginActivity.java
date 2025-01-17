@@ -230,6 +230,9 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e(TAG, "goToMainActivity: Error getting documents", e);
                         Toast.makeText(LoginActivity.this, "Error getting documents: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
+                })
+                .addOnFailureListener(task ->{
+                    Log.d(TAG, task.getMessage());
                 });
     }
 
