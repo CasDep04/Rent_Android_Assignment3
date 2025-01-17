@@ -8,9 +8,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
@@ -20,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.assignment3.Entity.Host;
 import com.example.assignment3.Entity.MarkerData;
 import com.example.assignment3.EntityDetails.RecordDetailsActivity;
 import com.example.assignment3.component.FirebaseAction;
@@ -98,6 +102,7 @@ public class GuestMainActivity extends AppCompatActivity {
 
         //miniview
         View view1 = viewAnimator.getChildAt(0);
+        setupProfileView(view1);
         View view2 = viewAnimator.getChildAt(1);
         View view3 = viewAnimator.getChildAt(2);
 
@@ -169,6 +174,7 @@ public class GuestMainActivity extends AppCompatActivity {
         recordListView.setLayoutManager(new LinearLayoutManager(this));
         // Display current user information
         displayCurrentUserInformation();
+
     }
 
 
@@ -430,5 +436,175 @@ public class GuestMainActivity extends AppCompatActivity {
                 Log.e(TAG, "setupListView: Failed to fetch records", task.getException());
             }
         });
+    }
+    private void setupProfileView(View profileView) {
+        TextView nameTextView = profileView.findViewById(R.id.nameTextView);
+        EditText nameEditText = profileView.findViewById(R.id.nameEditText);
+        TextView birthdayTextView = profileView.findViewById(R.id.birthdayTextView);
+        LinearLayout birthdayEditLayout = profileView.findViewById(R.id.birthdayEditLayout);
+        Spinner daySpinner = profileView.findViewById(R.id.daySpinner);
+        Spinner monthSpinner = profileView.findViewById(R.id.monthSpinner);
+        Spinner yearSpinner = profileView.findViewById(R.id.yearSpinner);
+        TextView roleLabel = profileView.findViewById(R.id.roleLabel);
+        TextView roleTextView = profileView.findViewById(R.id.roleTextView);
+        TextView balanceLabel = profileView.findViewById(R.id.balanceLabel);
+        TextView balanceTextView = profileView.findViewById(R.id.balanceTextView);
+
+        Button editProfileButton = profileView.findViewById(R.id.edit_profile_button);
+        Button finishEditButton = profileView.findViewById(R.id.finish_edit_button);
+        Button cancelButton = profileView.findViewById(R.id.cancel_button);
+        Button addBalanceButton = profileView.findViewById(R.id.add_balance_button);
+        Button logoutButton = profileView.findViewById(R.id.logout_button);
+        Button deleteAccountButton = profileView.findViewById(R.id.delete_account_button);
+        Button changeToHostButton = profileView.findViewById(R.id.change_to_host_button);
+
+        // Assuming currentGuest is already initialized with the current user's data
+        if (currentGuest != null) {
+            nameTextView.setText(currentGuest.getName());
+            nameEditText.setText(currentGuest.getName());
+
+            birthdayTextView.setText(currentGuest.getDateOfBirth());
+            // Set the spinners to the current date values
+            String[] dateParts = currentGuest.getDateOfBirth().split("-");
+            if (dateParts.length == 3) {
+                setSpinnerValue(daySpinner, dateParts[0]);
+                setSpinnerValue(monthSpinner, dateParts[1]);
+                setSpinnerValue(yearSpinner, dateParts[2]);
+            }
+
+            roleTextView.setText(currentGuest.getRole());
+            balanceTextView.setText(String.valueOf(currentGuest.getBalance()));
+        }
+
+        editProfileButton.setOnClickListener(v -> {
+            nameEditText.setText(currentGuest.getName());
+
+            String[] dateParts = currentGuest.getDateOfBirth().split("-");
+            if (dateParts.length == 3) {
+                setSpinnerValue(daySpinner, dateParts[0]);
+                setSpinnerValue(monthSpinner, dateParts[1]);
+                setSpinnerValue(yearSpinner, dateParts[2]);
+            }
+
+            nameTextView.setVisibility(View.GONE);
+            nameEditText.setVisibility(View.VISIBLE);
+
+            birthdayTextView.setVisibility(View.GONE);
+            birthdayEditLayout.setVisibility(View.VISIBLE);
+            changeToHostButton.setVisibility(View.GONE);
+            roleLabel.setVisibility(View.GONE);
+            roleTextView.setVisibility(View.GONE);
+
+            balanceLabel.setVisibility(View.GONE);
+            balanceTextView.setVisibility(View.GONE);
+
+            addBalanceButton.setVisibility(View.GONE);
+            logoutButton.setVisibility(View.GONE);
+            deleteAccountButton.setVisibility(View.GONE);
+            editProfileButton.setVisibility(View.GONE);
+            finishEditButton.setVisibility(View.VISIBLE);
+            cancelButton.setVisibility(View.VISIBLE);
+        });
+
+        finishEditButton.setOnClickListener(v -> {
+            String newName = nameEditText.getText().toString();
+            String newDateOfBirth = daySpinner.getSelectedItem().toString() + "-" +
+                    monthSpinner.getSelectedItem().toString() + "-" +
+                    yearSpinner.getSelectedItem().toString();
+
+            currentGuest.setName(newName);
+            currentGuest.setDateOfBirth(newDateOfBirth);
+
+            FirebaseAction.editUserInFirestore(currentGuest)
+                    .addOnSuccessListener(aVoid -> {
+                        nameTextView.setText(newName);
+                        birthdayTextView.setText(newDateOfBirth);
+
+                        nameTextView.setVisibility(View.VISIBLE);
+                        nameEditText.setVisibility(View.GONE);
+
+                        birthdayTextView.setVisibility(View.VISIBLE);
+                        birthdayEditLayout.setVisibility(View.GONE);
+
+                        roleLabel.setVisibility(View.VISIBLE);
+                        roleTextView.setVisibility(View.VISIBLE);
+
+                        balanceLabel.setVisibility(View.VISIBLE);
+                        balanceTextView.setVisibility(View.VISIBLE);
+                        changeToHostButton.setVisibility(View.VISIBLE);
+
+                        addBalanceButton.setVisibility(View.VISIBLE);
+                        logoutButton.setVisibility(View.VISIBLE);
+                        deleteAccountButton.setVisibility(View.VISIBLE);
+                        editProfileButton.setVisibility(View.VISIBLE);
+                        finishEditButton.setVisibility(View.GONE);
+                        cancelButton.setVisibility(View.GONE);
+
+                        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Failed to update profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        });
+
+        cancelButton.setOnClickListener(v -> {
+            nameTextView.setVisibility(View.VISIBLE);
+            nameEditText.setVisibility(View.GONE);
+
+            birthdayTextView.setVisibility(View.VISIBLE);
+            birthdayEditLayout.setVisibility(View.GONE);
+
+            roleLabel.setVisibility(View.VISIBLE);
+            roleTextView.setVisibility(View.VISIBLE);
+
+            balanceLabel.setVisibility(View.VISIBLE);
+            balanceTextView.setVisibility(View.VISIBLE);
+            changeToHostButton.setVisibility(View.VISIBLE);
+
+            addBalanceButton.setVisibility(View.VISIBLE);
+            logoutButton.setVisibility(View.VISIBLE);
+            deleteAccountButton.setVisibility(View.VISIBLE);
+            editProfileButton.setVisibility(View.VISIBLE);
+            finishEditButton.setVisibility(View.GONE);
+            cancelButton.setVisibility(View.GONE);
+        });
+
+        changeToHostButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Change to Host")
+                    .setMessage("Are you sure you want to change to host?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+
+                        FirebaseAction.specialDeleteUserFromFirestore(currentGuest.getId());
+                        Host tempHost = new Host(
+                                currentGuest.getId(),
+                                currentGuest.getEmail(),
+                                currentGuest.getBalance(),
+                                currentGuest.getName(),
+                                currentGuest.getDateOfBirth(), 0);
+                        FirebaseAction.addUserToFirestore(tempHost)
+                                .addOnSuccessListener(aVoid -> {
+                                    db.deleteUser();
+                                    db.updateUser(currentGuest.getEmail());
+                                    Intent intent = new Intent(GuestMainActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Failed to change to host: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+        });
+}
+
+    private void setSpinnerValue(Spinner spinner, String value) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equals(value)) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
     }
 }
