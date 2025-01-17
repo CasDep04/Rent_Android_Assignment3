@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import com.example.assignment3.Entity.User;
 import com.example.assignment3.component.adapter.CustomInfoWindowAdapter;
 import com.example.assignment3.component.adapter.LocationMapAdapter;
 import com.example.assignment3.component.adapter.RentalRecordAdapter;
+import com.example.assignment3.component.adapter.StatusAdapter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -40,12 +42,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +58,7 @@ public class GuestMainActivity extends AppCompatActivity {
     private ViewAnimator viewAnimator;
     private int currentView = -1; // Initialize to an invalid index
     private Guest currentGuest;
-    private ListView recordListView;
+    private RecyclerView recordListView;
     private List<RentalRecord> rentalRecords = new ArrayList<>();
 
     @Override
@@ -75,7 +71,6 @@ public class GuestMainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         viewAnimator = findViewById(R.id.viewAnimator);
-
 
         // Set up the BottomNavigationView
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_view);
@@ -123,7 +118,6 @@ public class GuestMainActivity extends AppCompatActivity {
 
         RecyclerView locationList = findViewById(R.id.location_list);
         ImageButton toggleButton = findViewById(R.id.toggle_list_button);
-
         // Initialize RecyclerView (hidden by default)
         locationList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -172,7 +166,7 @@ public class GuestMainActivity extends AppCompatActivity {
 
         //View 3
         recordListView = view3.findViewById(R.id.recordListView);
-
+        recordListView.setLayoutManager(new LinearLayoutManager(this));
         // Display current user information
         displayCurrentUserInformation();
     }
@@ -420,32 +414,20 @@ public class GuestMainActivity extends AppCompatActivity {
             return;
         }
 
+        Log.d(TAG, "setupListView: Fetching records for guestId: " + currentGuest.getId());
+
         FirebaseAction.findRecordsByGuestId(currentGuest.getId()).addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
+                Log.d(TAG, "setupListView: Records fetched successfully");
                 rentalRecords.clear();
                 rentalRecords.addAll(task.getResult());
 
                 // Create a custom adapter
-                RentalRecordAdapter adapter = new RentalRecordAdapter(this, rentalRecords);
-
-                // Set the adapter to the ListView
+                StatusAdapter adapter = new StatusAdapter(rentalRecords, currentGuest.getId());
                 recordListView.setAdapter(adapter);
-
-                // Set an item click listener to navigate to RecordDetailsActivity
-                recordListView.setOnItemClickListener((parent, view, position, id) -> {
-                    RentalRecord selectedRecord = rentalRecords.get(position);
-                    Intent intent = new Intent(GuestMainActivity.this, RecordDetailsActivity.class);
-                    intent.putExtra("recordID", selectedRecord.getId());
-                    startActivity(intent);
-                });
+                Log.d(TAG, "setupListView: Adapter set with " + rentalRecords.size() + " records");
             } else {
-                Exception e = task.getException();
-                if (e != null) {
-                    Log.e(TAG, "Failed to retrieve rental records", e);
-                    Toast.makeText(this, "Failed to retrieve rental records: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Failed to retrieve rental records: Unknown error", Toast.LENGTH_SHORT).show();
-                }
+                Log.e(TAG, "setupListView: Failed to fetch records", task.getException());
             }
         });
     }

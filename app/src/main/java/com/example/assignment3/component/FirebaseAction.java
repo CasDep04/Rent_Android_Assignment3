@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -238,18 +239,30 @@ public class FirebaseAction {
 
     public static Task<List<RentalRecord>> findRecordsByGuestId(int guestId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentalRecords").whereEqualTo("guestId", guestId).get().continueWith(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                List<RentalRecord> records = new ArrayList<>();
-                for (DocumentSnapshot document : task.getResult().getDocuments()) {
-                    records.add(document.toObject(RentalRecord.class));
-                }
-                return records;
-            } else {
-                throw task.getException() != null ? task.getException() : new Exception("Failed to find rental records by guestId");
-            }
-        });
+
+        return db.collection("rentalRecords")
+                .whereEqualTo("guestId", guestId)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<RentalRecord> records = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                            RentalRecord record = document.toObject(RentalRecord.class);
+                            if (record != null) {
+                                records.add(record);
+                            }
+                        }
+                        return records;
+                    } else {
+                        // Handle the case where the task fails
+                        throw task.getException() != null
+                                ? task.getException()
+                                : new Exception("Failed to fetch rental records for guestId: " + guestId);
+                    }
+                });
     }
+
+
 
     public static Task<List<RentalRecord>> findRecordsByHostId(int hostId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -283,17 +296,25 @@ public class FirebaseAction {
 
     public static Task<List<RentalRecord>> findAllRecords() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentalRecords").get().continueWith(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                List<RentalRecord> records = new ArrayList<>();
-                for (DocumentSnapshot document : task.getResult().getDocuments()) {
-                    records.add(document.toObject(RentalRecord.class));
-                }
-                return records;
-            } else {
-                throw task.getException() != null ? task.getException() : new Exception("Failed to find rental records");
-            }
-        });
+        return db.collection("rentalRecords")
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<RentalRecord> records = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                            RentalRecord record = document.toObject(RentalRecord.class);
+                            if (record != null) {
+                                records.add(record);
+                            }
+                        }
+                        return records;
+                    } else {
+                        // Handle the case where the task fails
+                        throw task.getException() != null
+                                ? task.getException()
+                                : new Exception("Failed to fetch rental records");
+                    }
+                });
     }
 
     public static Task<List<Location>> findAllLocations() {
@@ -346,72 +367,20 @@ public class FirebaseAction {
 //    }
 
     // Read all rental records from Firestore
-    public static Task<List<RentalRecord>> getAllRentalRecordsFromFirestore() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentals")
-                .get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        return task.getResult().toObjects(RentalRecord.class);
-                    } else {
-                        throw task.getException(); // Re-throw the exception if the query fails
-                    }
-                });
-    }
 
-    // Read a specific rental record by ID from Firestore
-    public static Task<RentalRecord> getRentalRecordByIdFromFirestore(int id) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentals").document(String.valueOf(id))
-                .get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        return task.getResult().toObject(RentalRecord.class);
-                    } else {
-                        throw task.getException(); // Re-throw the exception if the query fails
-                    }
-                });
-    }
 
-    // Read rental records by hostId from Firestore
-    public static Task<List<RentalRecord>> getRentalRecordsByHostIdFromFirestore(int hostId) {
+    public static Task<List<Rental>> findAllRentals() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentals")
-                .whereEqualTo("hostId", hostId)
-                .get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        return task.getResult().toObjects(RentalRecord.class);
-                    } else {
-                        throw task.getException(); // Re-throw the exception if the query fails
-                    }
-                });
-    }
-
-    // Read rental records by guestId from Firestore
-    public static Task<List<RentalRecord>> getRentalRecordsByGuestIdFromFirestore(int guestId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentals")
-                .whereEqualTo("guestId", guestId)
-                .get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        return task.getResult().toObjects(RentalRecord.class);
-                    } else {
-                        throw task.getException(); // Re-throw the exception if the query fails
-                    }
-                });
-    }
-
-    // Update an existing rental record in Firestore
-    public static Task<Void> updateRentalRecordInFirestore(RentalRecord rentalRecord) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentals").document(String.valueOf(rentalRecord.getId())).set(rentalRecord);
-    }
-
-    // Delete a rental record from Firestore
-    public static Task<Void> deleteRentalRecordFromFirestore(int id) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentals").document(String.valueOf(id)).delete();
+        return db.collection("rentals").get().continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                List<Rental> reviews = new ArrayList<>();
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                    reviews.add(document.toObject(Rental.class));
+                }
+                return reviews;
+            } else {
+                throw task.getException() != null ? task.getException() : new Exception("Failed to find Rentals");
+            }
+        });
     }
 }

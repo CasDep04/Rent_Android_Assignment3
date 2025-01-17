@@ -28,50 +28,133 @@
         app:layout_constraintTop_toBottomOf="@id/welcomeTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/buttonLogout"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp">
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_margin="16dp">
 
-        <ImageButton
-            android:id="@+id/buttonUsers"
+        <!-- User -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center"
             android:layout_margin="8dp"
-            android:background="?attr/selectableItemBackground"
-            android:scaleType="centerInside"
-            android:src="@drawable/baseline_person_24" />
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1">
 
-        <ImageButton
-            android:id="@+id/buttonLocations"
+            <ImageButton
+                android:id="@+id/buttonUsers"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/baseline_person_24"
+                android:contentDescription="Manage Users" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Users"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Locations -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center"
             android:layout_margin="8dp"
-            android:background="?attr/selectableItemBackground"
-            android:scaleType="centerInside"
-            android:src="@drawable/baseline_location_city_24" />
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1">
 
-        <ImageButton
-            android:id="@+id/buttonReviews"
+            <ImageButton
+                android:id="@+id/buttonLocations"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/baseline_location_city_24"
+                android:contentDescription="Manage Locations" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Locations"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Reviews -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center"
             android:layout_margin="8dp"
-            android:background="?attr/selectableItemBackground"
-            android:scaleType="centerInside"
-            android:src="@drawable/baseline_pending_actions_24" />
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1">
 
-        <ImageButton
-            android:id="@+id/buttonRecords"
+            <ImageButton
+                android:id="@+id/buttonReviews"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/baseline_pending_actions_24"
+                android:contentDescription="Manage Reviews" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reviews"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Records -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center"
             android:layout_margin="8dp"
-            android:background="?attr/selectableItemBackground"
-            android:scaleType="centerInside"
-            android:src="@drawable/baseline_notifications_24" />
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1">
 
+            <ImageButton
+                android:id="@+id/buttonRecords"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/baseline_notifications_24"
+                android:contentDescription="Manage Records" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Records"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:gravity="center" />
+        </LinearLayout>
     </GridLayout>
 
-    <ListView
-        android:id="@+id/listView"
+    <!-- Add ListView and Cancel Button -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"
@@ -83,26 +166,15 @@
         android:layout_marginBottom="16dp" />
 
     <Button
-        android:id="@+id/buttonAdd"
+        android:id="@+id/buttonCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:text="Add New"
-        app:layout_constraintTop_toBottomOf="@id/listView"
+        android:text="Cancel"
+        app:layout_constraintBottom_toTopOf="@id/buttonLogout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
-
-    <Button
-        android:id="@+id/buttonBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:text="Back"
-        app:layout_constraintTop_toBottomOf="@id/buttonAdd"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        android:layout_marginBottom="8dp" />
 
     <Button
         android:id="@+id/buttonLogout"
