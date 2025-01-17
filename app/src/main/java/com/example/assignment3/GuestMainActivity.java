@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -12,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -71,17 +74,32 @@ public class GuestMainActivity extends AppCompatActivity {
         db.open();
         mAuth = FirebaseAuth.getInstance();
 
-        Button buttonView1 = findViewById(R.id.button1);
-        Button buttonView2 = findViewById(R.id.button2);
-        Button buttonView3 = findViewById(R.id.button3);
         viewAnimator = findViewById(R.id.viewAnimator);
 
-        buttonView1.setOnClickListener(v -> showView(0));
-        buttonView2.setOnClickListener(v -> showView(1));
-        buttonView3.setOnClickListener(v -> showView(2));
+
+        // Set up the BottomNavigationView
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_view);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+                if (itemId == R.id.nav_profile) {
+                    showView(0);
+                } else if (itemId == R.id.nav_map) {
+                    showView(1);
+                } else if (itemId == R.id.nav_status) {
+                    showView(2);
+                }
+                return true;
+            }
+        });
 
         // Set default view
-        showView(1);
+        showView(0);
+
+        // Set up the Delete Account button
+        Button deleteAccountButton = findViewById(R.id.delete_account_button);
+        deleteAccountButton.setOnClickListener(v -> showDeleteAccountDialog());
 
         //miniview
         View view1 = viewAnimator.getChildAt(0);
@@ -99,12 +117,6 @@ public class GuestMainActivity extends AppCompatActivity {
             startActivityForResult(intent, ADD_BALANCE_REQUEST_CODE);
         });
         logout_button.setOnClickListener(v -> logOut());
-
-        // Set up the Delete Account button
-        Button deleteAccountButton = findViewById(R.id.delete_account_button);
-        deleteAccountButton.setOnClickListener(v -> showDeleteAccountDialog());
-
-
 
         // view 2 for map layout
 
@@ -247,7 +259,6 @@ public class GuestMainActivity extends AppCompatActivity {
                     Toast.makeText(this, "Failed to load rental houses", Toast.LENGTH_SHORT).show();
                 });
     }
-
 
 
 

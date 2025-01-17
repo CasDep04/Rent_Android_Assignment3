@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -27,12 +28,13 @@ import java.util.List;
 public class AdminMainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private GridLayout gridLayout;
     private ListView listView;
     private Button buttonAdd, buttonBack, buttonLogout;
     private ImageButton buttonUsers, buttonLocations, buttonReviews, buttonRecords;
-    private View gridLayout;
     private int currentView = 0;
     private DatabaseManager db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,82 +44,86 @@ public class AdminMainActivity extends AppCompatActivity {
         db.open();
         mAuth = FirebaseAuth.getInstance();
 
+        gridLayout = findViewById(R.id.gridLayout);
         listView = findViewById(R.id.listView);
         buttonAdd = findViewById(R.id.buttonAdd);
         buttonBack = findViewById(R.id.buttonBack);
-        buttonLogout = findViewById(R.id.goBackButton);
+        buttonLogout = findViewById(R.id.buttonLogout);
+
         buttonUsers = findViewById(R.id.buttonUsers);
         buttonLocations = findViewById(R.id.buttonLocations);
         buttonReviews = findViewById(R.id.buttonReviews);
         buttonRecords = findViewById(R.id.buttonRecords);
-        gridLayout = findViewById(R.id.gridLayout);
 
-        buttonUsers.setOnClickListener(v -> loadUsers());
-        buttonLocations.setOnClickListener(v -> loadLocations());
-        buttonReviews.setOnClickListener(v -> loadReviews());
-        buttonRecords.setOnClickListener(v -> loadRecords());
+        buttonUsers.setOnClickListener(v -> showListView("users"));
+        buttonLocations.setOnClickListener(v -> showListView("locations"));
+        buttonReviews.setOnClickListener(v -> showListView("reviews"));
+        buttonRecords.setOnClickListener(v -> showListView("records"));
         buttonLogout.setOnClickListener(v -> signOut());
         buttonBack.setOnClickListener(v -> showGridLayout());
         buttonAdd.setOnClickListener(v -> addNewData());
     }
 
-    private void loadUsers() {
-        FirebaseAction.findAllUsers().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                List<User> users = task.getResult();
-                UserAdapter adapter = new UserAdapter(this, users);
-                listView.setAdapter(adapter);
-                buttonAdd.setText("Add New User");
-                currentView = 1;
-                showListView();
-            }
-        }).addOnFailureListener(this::handleFailure);
-    }
-
-    private void loadLocations() {
-        FirebaseAction.findAllLocations().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                List<Location> locations = task.getResult();
-                LocationAdapter adapter = new LocationAdapter(this, locations);
-                listView.setAdapter(adapter);
-                buttonAdd.setText("Add New Location");
-                currentView = 2;
-                showListView();
-            }
-        }).addOnFailureListener(this::handleFailure);
-    }
-
-    private void loadReviews() {
-        FirebaseAction.findAllReviews().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                List<Review> reviews = task.getResult();
-                ReviewAdapter adapter = new ReviewAdapter(this, reviews);
-                listView.setAdapter(adapter);
-                buttonAdd.setText("Add New Review");
-                currentView = 3;
-                showListView();
-            }
-        }).addOnFailureListener(this::handleFailure);
-    }
-
-    private void loadRecords() {
-        FirebaseAction.findAllRecords().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                List<RentalRecord> records = task.getResult();
-                RentalRecordAdapter adapter = new RentalRecordAdapter(this, records);
-                listView.setAdapter(adapter);
-                buttonAdd.setText("Add New Records");
-                currentView = 4;
-                showListView();
-            }
-        }).addOnFailureListener(this::handleFailure);
-    }
-
-    private void showListView() {
+    private void showListView(String type) {
         gridLayout.setVisibility(View.GONE);
         listView.setVisibility(View.VISIBLE);
         buttonAdd.setVisibility(View.VISIBLE);
         buttonBack.setVisibility(View.VISIBLE);
+
+        switch (type) {
+            case "users":
+                FirebaseAction.findAllUsers().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<User> users = task.getResult();
+                        UserAdapter adapter = new UserAdapter(this, users);
+                        listView.setAdapter(adapter);
+                        buttonAdd.setText("Add New User");
+                        currentView = 1;
+                    } else {
+                        showToast("Failed to load users");
+                    }
+                }).addOnFailureListener(this::handleFailure);
+                break;
+            case "locations":
+                FirebaseAction.findAllLocations().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<Location> locations = task.getResult();
+                        LocationAdapter adapter = new LocationAdapter(this, locations);
+                        listView.setAdapter(adapter);
+                        buttonAdd.setText("Add New Location");
+                        currentView = 2;
+                    } else {
+                        showToast("Failed to load locations");
+                    }
+                }).addOnFailureListener(this::handleFailure);
+                break;
+            case "reviews":
+                FirebaseAction.findAllReviews().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<Review> reviews = task.getResult();
+                        ReviewAdapter adapter = new ReviewAdapter(this, reviews);
+                        listView.setAdapter(adapter);
+                        buttonAdd.setText("Add New Review");
+                        currentView = 3;
+                    } else {
+                        showToast("Failed to load reviews");
+                    }
+                }).addOnFailureListener(this::handleFailure);
+                break;
+            case "records":
+                FirebaseAction.findAllRecords().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<RentalRecord> records = task.getResult();
+                        RentalRecordAdapter adapter = new RentalRecordAdapter(this, records);
+                        listView.setAdapter(adapter);
+                        buttonAdd.setText("Add New Records");
+                        currentView = 4;
+                    } else {
+                        showToast("Failed to load records");
+                    }
+                }).addOnFailureListener(this::handleFailure);
+                break;
+        }
     }
 
     private void showGridLayout() {
@@ -163,5 +169,9 @@ public class AdminMainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         db.close();
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

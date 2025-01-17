@@ -326,23 +326,24 @@ public class FirebaseAction {
         });
     }
 
+    //TODO: fix
     // Create a new rental record in Firestore
-    public static Task<Void> addRentalRecordToFirestore(RentalRecord rentalRecord) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentals")
-                .orderBy("id", Query.Direction.DESCENDING)
-                .limit(1)
-                .get()
-                .continueWithTask(task -> {
-                    if (task.isSuccessful()) {
-                        int newId = task.getResult().isEmpty() ? 1 : task.getResult().getDocuments().get(0).getLong("id").intValue() + 1;
-                        rentalRecord.setId(newId);
-                        return db.collection("rentals").document(String.valueOf(rentalRecord.getId())).set(rentalRecord);
-                    } else {
-                        throw task.getException(); // Re-throw the exception if the query fails
-                    }
-                });
-    }
+//    public static Task<Void> addRentalRecordToFirestore(RentalRecord rentalRecord) {
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        return db.collection("rentals")
+//                .orderBy("id", Query.Direction.DESCENDING)
+//                .limit(1)
+//                .get()
+//                .continueWithTask(task -> {
+//                    if (task.isSuccessful()) {
+//                        int newId = task.getResult().isEmpty() ? 1 : task.getResult().getDocuments().get(0).getLong("id").intValue() + 1;
+//                        rentalRecord.setId(newId);
+//                        return db.collection("rentals").document(String.valueOf(rentalRecord.getId())).set(rentalRecord);
+//                    } else {
+//                        throw task.getException(); // Re-throw the exception if the query fails
+//                    }
+//                });
+//    }
 
     // Read all rental records from Firestore
     public static Task<List<RentalRecord>> getAllRentalRecordsFromFirestore() {
