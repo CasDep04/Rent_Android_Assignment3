@@ -2,6 +2,7 @@ package com.example.assignment3;
 
 import android.animation.Animator;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.assignment3.component.Localdatabase.DatabaseHelper;
 import com.example.assignment3.component.Localdatabase.DatabaseManager;
 import com.example.assignment3.component.Utils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -78,6 +80,15 @@ public class LoginActivity extends AppCompatActivity {
         goBackButton.setOnClickListener(v -> toLoginView());
 
         Utils.animateViewOut(registerView, ANIMATION_DISTANCE);
+
+        try (Cursor cursor = LocalDB.selectAllUsers()) {
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                goToMainActivity(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.USER_EMAIL)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void loginUser(View view) {
@@ -220,5 +231,11 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Error getting documents: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalDB.close();
     }
 }

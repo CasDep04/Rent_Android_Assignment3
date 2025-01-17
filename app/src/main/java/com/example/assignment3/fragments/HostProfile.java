@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.assignment3.R;
 import com.example.assignment3.LoginActivity;
 import com.example.assignment3.Entity.User;
+import com.example.assignment3.component.Localdatabase.DatabaseManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,6 +23,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class HostProfile extends Fragment {
     FirebaseAuth auth;
     FirebaseFirestore db;
+    //autologin
+    DatabaseManager dbManager;
     Button logoutButton, withdrawButton;
     TextView idText, emailText, roleText, balanceText, nameText, dateOfBirthText;
     private int userId;
@@ -36,6 +39,8 @@ public class HostProfile extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        dbManager = new DatabaseManager(view.getContext());
+        dbManager.open();
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -68,6 +73,10 @@ public class HostProfile extends Fragment {
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
+
+            //for auto login
+            dbManager.deleteUser();
+            dbManager.close();
             getActivity().finish();
         });
 
@@ -114,4 +123,5 @@ public class HostProfile extends Fragment {
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .show();
     }
+
 }
