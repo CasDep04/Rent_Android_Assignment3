@@ -14,8 +14,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.assignment3.BroadcastReceiver.NetworkListener;
-import com.example.assignment3.BroadcastReceiver.NetworkMonitorManager;
 import com.example.assignment3.component.Localdatabase.DatabaseHelper;
 import com.example.assignment3.component.Localdatabase.DatabaseManager;
 import com.example.assignment3.component.Utils;
@@ -25,7 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-public class LoginActivity extends AppCompatActivity implements NetworkListener {
+public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText emailEditText, passwordEditText;
     private EditText registerEmailEditText, registerPasswordEditText, registerConfirmPasswordEditText;
@@ -34,24 +32,13 @@ public class LoginActivity extends AppCompatActivity implements NetworkListener 
     private DatabaseManager LocalDB;
     private FirebaseFirestore firebaseDB;
     private Button loginButton, toRegisterViewButton, registerButton, goBackButton;
-    private NetworkMonitorManager networkMonitorManager;
+
     private static final float ANIMATION_DISTANCE = 1000f; // Default animation distance
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        // Create the network manager
-        networkMonitorManager = new NetworkMonitorManager(this);
-
-        // Set *this* as the listener
-        networkMonitorManager.setNetworkListener(this);
-
-        // Register the network callback
-        networkMonitorManager.registerNetworkCallback();
-
-
 
         LocalDB = new DatabaseManager(this);
         LocalDB.open();
@@ -90,35 +77,6 @@ public class LoginActivity extends AppCompatActivity implements NetworkListener 
         goBackButton.setOnClickListener(v -> toLoginView());
 
         Utils.animateViewOut(registerView, ANIMATION_DISTANCE);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Unregister the callback to avoid memory leaks
-        if (networkMonitorManager != null) {
-            networkMonitorManager.unregisterNetworkCallback();
-        }
-    }
-
-    // Called when internet is lost
-    @Override
-    public void onNetworkLost() {
-        // Show a popup message that connectivity is lost
-        runOnUiThread(() -> {
-            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
-            // Or show an AlertDialog, Snackbar, etc.
-        });
-    }
-
-    // Called when internet is available again
-    @Override
-    public void onNetworkAvailable() {
-        // e.g. hide a "no connection" message if shown
-        // or show a Toast that internet is back
-        runOnUiThread(() -> {
-            Toast.makeText(this, "Internet reconnected", Toast.LENGTH_SHORT).show();
-        });
     }
 
     public void loginUser(View view) {
@@ -226,7 +184,6 @@ public class LoginActivity extends AppCompatActivity implements NetworkListener 
                                     intent = new Intent(LoginActivity.this, AdminMainActivity.class);
                                 } else if ("guest".equals(role)) {
                                     intent = new Intent(LoginActivity.this, GuestMainActivity.class);
-                                    intent.putExtra("userId", (int) id);
                                 } else if ("host".equals(role)){
                                     intent = new Intent(LoginActivity.this, HostMainActivity.class);
                                 }
