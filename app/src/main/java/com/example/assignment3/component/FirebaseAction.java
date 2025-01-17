@@ -64,22 +64,22 @@ public class FirebaseAction {
                 });
     }
 
-    public static Task<Void> addRecordToFirestore(RentalRecord record) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("rentalRecords")
-                .orderBy("id", Query.Direction.DESCENDING)
-                .limit(1)
-                .get()
-                .continueWithTask(task -> {
-                    if (task.isSuccessful()) {
-                        int newId = task.getResult().isEmpty() ? 1 : task.getResult().getDocuments().get(0).getLong("id").intValue() + 1;
-                        record.setId(newId);
-                        return db.collection("rentalRecords").document(String.valueOf(record.getId())).set(record);
-                    } else {
-                        throw task.getException(); // Re-throw the exception if the query fails
-                    }
-                });
-    }
+//    public static Task<Void> addRecordToFirestore(RentalRecord record) {
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        return db.collection("rentalRecords")
+//                .orderBy("id", Query.Direction.DESCENDING)
+//                .limit(1)
+//                .get()
+//                .continueWithTask(task -> {
+//                    if (task.isSuccessful()) {
+//                        int newId = task.getResult().isEmpty() ? 1 : task.getResult().getDocuments().get(0).getLong("id").intValue() + 1;
+//                        record.setId(newId);
+//                        return db.collection("rentalRecords").document(String.valueOf(record.getId())).set(record);
+//                    } else {
+//                        throw task.getException(); // Re-throw the exception if the query fails
+//                    }
+//                });
+//    }
 
     public static Task<Void> addUserToFirestore(User user) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();

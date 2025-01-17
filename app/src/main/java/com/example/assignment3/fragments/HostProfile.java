@@ -1,39 +1,35 @@
 package com.example.assignment3.fragments;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import com.example.assignment3.R;
 import com.example.assignment3.LoginActivity;
-import com.example.assignment3.component.Localdatabase.DatabaseManager;
+import com.example.assignment3.Entity.User;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class HostProfile extends Fragment {
     FirebaseAuth auth;
     FirebaseFirestore db;
-    FirebaseUser user;
-    Button logoutButton;
-    TextView greetingsText;
-    DatabaseManager localDB;
+    Button logoutButton, withdrawButton;
+    TextView idText, emailText, roleText, balanceText, nameText, dateOfBirthText;
+    private int userId;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_host_profile, container, false);
     }
 
@@ -43,47 +39,79 @@ public class HostProfile extends Fragment {
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        greetingsText = view.findViewById(R.id.user_details);
+        idText = view.findViewById(R.id.user_id);
+        emailText = view.findViewById(R.id.user_email);
+        roleText = view.findViewById(R.id.user_role);
+        balanceText = view.findViewById(R.id.user_balance);
+        nameText = view.findViewById(R.id.user_name);
+        dateOfBirthText = view.findViewById(R.id.user_date_of_birth);
         logoutButton = view.findViewById(R.id.logout_btn);
-        user = auth.getCurrentUser();
+        withdrawButton = view.findViewById(R.id.withdraw_btn);
 
-        localDB = new DatabaseManager(view.getContext());
-        localDB.open();
-        if (user == null) {
+        // Retrieve userId from arguments
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            userId = bundle.getInt("userId", -1);
+        } else {
+            userId = -1;
+        }
+
+        if (userId == -1) {
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
             getActivity().finish();
         } else {
-            db.collection("users").document(user.getUid()).get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                String role = document.getString("role");
-                                greetingsText.setText("Welcome, " + user.getEmail() + " (" + role + ")");
-                            } else {
-                                greetingsText.setText("Welcome, " + user.getEmail());
-                            }
-                        } else {
-                            greetingsText.setText("Welcome, " + user.getEmail());
-                        }
-                    });
+            fetchUserProfile();
         }
 
         logoutButton.setOnClickListener(view1 -> {
-            auth.signOut();
-
-            localDB.deleteUser();
+            FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
             getActivity().finish();
+        });
 
+        withdrawButton.setOnClickListener(view2 -> {
+            db.collection("users").document(String.valueOf(userId)).update("balance", 0)
+                    .addOnSuccessListener(aVoid -> {
+                        fetchUserProfile();
+                        showTransactionCompleteDialog();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getActivity(), "Error processing withdrawal", Toast.LENGTH_SHORT).show();
+                    });
         });
     }
 
-    @Override
-    public void onDestroyView() {
-        localDB.close();
-        super.onDestroyView();
+    private void fetchUserProfile() {
+        db.collection("users").document(String.valueOf(userId)).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            User userProfile = document.toObject(User.class);
+                            if (userProfile != null) {
+                                idText.setText("ID: " + userProfile.getId());
+                                emailText.setText("Email: " + userProfile.getEmail());
+                                roleText.setText("Role: " + userProfile.getRole());
+                                balanceText.setText("Balance: $" + userProfile.getBalance());
+                                nameText.setText("Name: " + userProfile.getName());
+                                dateOfBirthText.setText("Date of Birth: " + userProfile.getDateOfBirth());
+                            }
+                        } else {
+                            emailText.setText("Welcome, " + userId);
+                        }
+                    } else {
+                        emailText.setText("Welcome, " + userId);
+                    }
+                });
+    }
+
+    private void showTransactionCompleteDialog() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Transaction Complete")
+                .setMessage("Balance transferred to your bank account")
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }

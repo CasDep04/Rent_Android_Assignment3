@@ -28,11 +28,13 @@ public class RentalAdapter extends RecyclerView.Adapter<RentalAdapter.RentalView
     private final Context context;
     private final List<Rental> rentalList;
     private final FirebaseFirestore db;
+    private final int userId;
 
-    public RentalAdapter(Context context, List<Rental> rentalList) {
+    public RentalAdapter(Context context, List<Rental> rentalList, int userId) {
         this.context = context;
         this.rentalList = rentalList;
         this.db = FirebaseFirestore.getInstance();
+        this.userId = userId;
     }
 
     @NonNull
@@ -54,6 +56,7 @@ public class RentalAdapter extends RecyclerView.Adapter<RentalAdapter.RentalView
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, RentalDetailPageActivity.class);
             intent.putExtra("RENTAL_ID", rental.getId());
+            intent.putExtra("USER_ID", userId);  // Pass the user ID
             context.startActivity(intent);
         });
 
@@ -72,6 +75,11 @@ public class RentalAdapter extends RecyclerView.Adapter<RentalAdapter.RentalView
                 .setPositiveButton("Yes", (dialog, which) -> deleteRental(rental, position))
                 .setNegativeButton("No", null)
                 .show();
+    }
+    public void setFilteredList(List<Rental> filteredList) {
+        rentalList.clear();  // Clear the existing list
+        rentalList.addAll(filteredList);  // Add filtered items
+        notifyDataSetChanged();
     }
 
     private void deleteRental(Rental rental, int position) {
@@ -111,4 +119,6 @@ public class RentalAdapter extends RecyclerView.Adapter<RentalAdapter.RentalView
             deleteButton = itemView.findViewById(R.id.delete_button);
         }
     }
+
+
 }

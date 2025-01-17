@@ -1,24 +1,28 @@
 package com.example.assignment3.Entity;
 
+import android.util.Base64DataException;
+
 public class RentalRecord {
-    private int id;
+    private String id;
     private int guestId;
     private int hostId;
-    private int locationId;
+    private String locationId;
+    private String name;
     private String startDate;
     private String endDate;
     private double totalPrice;
-    private String status;  //(pending, accepted, rejected)
+    private String status;  // (pending, accepted, rejected)
 
-    public RentalRecord(){
-
+    public RentalRecord() {
     }
+
     // Constructor with the new status parameter
-    public RentalRecord(int id, int guestId, int hostId, int locationId, String startDate, String endDate, double price, String status) {
+    public RentalRecord(String id, int guestId, int hostId, String locationId, String name, String startDate, String endDate, double price, String status) {
         this.id = id;
         this.guestId = guestId;
         this.hostId = hostId;
         this.locationId = locationId;
+        this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
         this.totalPrice = price;
@@ -26,11 +30,11 @@ public class RentalRecord {
     }
 
     // Getters and Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -50,11 +54,11 @@ public class RentalRecord {
         this.hostId = hostId;
     }
 
-    public int getLocationId() {
+    public String getLocationId() {  // Corrected to return String
         return locationId;
     }
 
-    public void setLocationId(int locationId) {
+    public void setLocationId(String locationId) {  // Corrected to accept String
         this.locationId = locationId;
     }
 
@@ -88,5 +92,13 @@ public class RentalRecord {
 
     public void setStatus(String status) {
         this.status = status;  // Setter for status
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
